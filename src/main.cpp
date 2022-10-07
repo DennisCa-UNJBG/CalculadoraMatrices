@@ -1,59 +1,17 @@
 #include <vector>
 #include <map>
 #include <iostream>
-#include <cmath>
-#include <random> // generar numeros aleatorios
-#include <iomanip> // crear una tabla
 #include <sstream> // convertir string a int
 
+// incluir librerias custom
+#include <matriz.hpp>
+#include <opermatrices.hpp>
+
 using namespace std;
+
 /* varibles globales de configuracion */
-const int MIN = -10; // minimo valor aleatorio
-const int MAX = 10; // maximo valor aleatorio
-const int TABLA = 4; // espacios para ordenar valores en la tabla
 bool ejecutando = true; // variable global que mantiene vivo el programa
-bool opMenu = true; // true -> menu 01 , false -> menu 02
-
-class Matriz{ /* clase base de una matriz */
-public:
-    Matriz(int orden);
-    ~Matriz();
-    void imprimirMatriz(int espacios = TABLA);
-    void rellenarMatriz();
-    double calcularDeterminante();
-    Matriz* calcularInversa(double& deter);
-    inline int getOrden() { return orden; }
-    inline double** getInicio() { return M; }
-private:
-    double** M;
-    int orden;
-    double determinante(double** matriz, int orden);
-    double cofactor(double** matriz, int orden, int fila, int columna);
-    Matriz* traspuesta();
-    // sobrecarga de operadores
-    friend Matriz* operator+(Matriz& matriz01, Matriz& matriz02);
-    friend Matriz* operator-(Matriz& matriz01, Matriz& matriz02);
-    friend Matriz* operator*(Matriz& matriz01, Matriz& matriz02);
-    friend Matriz* operator*(Matriz& matriz, double numero);
-protected:
-};
-
-class OperacMatrices{ /* clase global de operaciones */
-public:
-    map<string, Matriz*>matrices; // estructura clave/valor (contiene todas las matrices)
-    void agregarMatriz(int& orden, string&nombre);
-    void buscarMatriz(bool& cancelar, int& idMatriz, string& nombre);
-    //operaciones disponibles
-    void deterMatriz(OperacMatrices* misMatrices);
-    void inversaMatriz(OperacMatrices* misMatrices);
-    void sumarMatrices(OperacMatrices* misMatrices);
-    void restarMatrices(OperacMatrices* misMatrices);
-    void multiMatrices(OperacMatrices* misMatrices );
-    void multiEscalarMatriz(OperacMatrices* misMatrices);
-    void salirMenuOper(OperacMatrices* misMatrices);
-private:
-protected:
-};
+bool OperacMatrices::openMenu = true; // true -> menu 01 , false -> menu 02
 
 /* opciones del menu principal */
 void menuPrincipal();
@@ -94,14 +52,14 @@ vector <OperMenu02> MenuOperaciones = { // opciones del menu de operaciones
     { "Regresar al menu Principal",              &OperacMatrices::salirMenuOper } // cambiar variable global
 }; // empleamos los punteros a metodos de clase
 
-int main(int argc, char *argv[]){ /* programa principal */
+int main(/*int argc, char *argv[]*/){ /* programa principal */
     OperacMatrices misMatrices = OperacMatrices();
     while(ejecutando){
         system("cls");
 
         string sOpcion;
         int iOpcion;
-        opMenu ? menuPrincipal() : menuOperacMatrices();
+        OperacMatrices::openMenu ? menuPrincipal() : menuOperacMatrices();
 
         cout << "\nSelecciona una opcion del menu: ";
         cin.sync(); getline(cin,sOpcion);
@@ -111,7 +69,7 @@ int main(int argc, char *argv[]){ /* programa principal */
         ss << sOpcion;
         ss >> iOpcion;
 
-        opMenu ? opcionSelecMenuPrinc(&misMatrices, iOpcion) : opcionSelecMenuOper(&misMatrices, iOpcion);
+        OperacMatrices::openMenu ? opcionSelecMenuPrinc(&misMatrices, iOpcion) : opcionSelecMenuOper(&misMatrices, iOpcion);
     }
     return 0;
 }
@@ -155,7 +113,7 @@ void verMatrices(OperacMatrices* misMatrices, int /*opcion*/){
 }
 
 void abrirMenuOpMatrices(OperacMatrices* /*misMatrices*/, int /*opcion*/){
-    opMenu = false;
+    OperacMatrices::openMenu = false;
     system("cls");
     menuOperacMatrices();
 }
@@ -179,7 +137,7 @@ void opcionSelecMenuPrinc(OperacMatrices* misMatrices, int opcion){
         MenuPrincipal[opcion-1].func(misMatrices, 0);
 
     // no lanzar el pause si se elige el menu 02 por 1º vez
-    if(opMenu != false)
+    if(OperacMatrices::openMenu != false)
         system("pause");
 }
 
@@ -199,343 +157,4 @@ void menuPrincipal(){
 
     for(size_t i = 0; i < MenuPrincipal.size(); i++)
         cout << i+1 << ". " << MenuPrincipal[i].opciones << endl;
-}
-
-/* implementación de los metodos de la clase  OperacMatrices */
-
-void OperacMatrices::deterMatriz(OperacMatrices* misMatrices){
-    string nombreMatriz;
-    bool cancelar = false;
-    int i = 0;
-    // buscar la matriz que se necesita para la operacion
-    misMatrices->buscarMatriz(cancelar, i, nombreMatriz);
-
-    if(!cancelar){
-        cout << "La determinante de la matriz " << nombreMatriz << " es: "
-            << misMatrices->matrices[nombreMatriz]->calcularDeterminante()
-            << endl;
-    }
-}
-
-void OperacMatrices::inversaMatriz(OperacMatrices* misMatrices){
-    string nombreMatriz;
-    bool cancelar = false;
-    int i = 0;
-    // buscar la matriz que se necesita para la operacion
-    misMatrices->buscarMatriz(cancelar, i, nombreMatriz);
-
-    if(cancelar) // se cancela la operacion ?
-        return;
-
-    double det = misMatrices->matrices[nombreMatriz]->calcularDeterminante();
-    if(det == 0){
-        cout << "La determinante es CERO, la matriz no tiene inversa..." << endl;
-        return;
-    }
-
-    Matriz* matriz = misMatrices->matrices[nombreMatriz]->calcularInversa(det);
-    cout << "La inversa de la matriz '" << nombreMatriz << "' es :" << endl;
-    matriz->imprimirMatriz(7);
-    cout << "La determinante es: " << det << endl;
-    delete matriz; // liberar memoria
-}
-
-void OperacMatrices::multiMatrices(OperacMatrices* misMatrices){
-    string nombreMatriz[2];
-    bool cancelar = false;
-    int i = 0;
-    // buscar las 2 matrices que se necesitan para la operacion
-    while (i < 2 && !cancelar){
-        misMatrices->buscarMatriz(cancelar, i, nombreMatriz[i]);
-        i++;
-    }
-
-    if(cancelar) // se cancela la operacion ?
-        return;
-
-    if(!(misMatrices->matrices[nombreMatriz[0]]->getOrden() == misMatrices->matrices[nombreMatriz[1]]->getOrden())){
-        cout << "No se puede operar, las matrices son de orden distinto..." << endl;
-        return;
-    }
-
-    Matriz* temp = *(misMatrices->matrices[nombreMatriz[0]]) * *(misMatrices->matrices[nombreMatriz[1]]);
-    cout << "\nLa multiplicacion de las matrices es:" << endl;
-    temp->imprimirMatriz();
-    delete temp; // liberar memoria
-}
-
-void OperacMatrices::multiEscalarMatriz(OperacMatrices* misMatrices){
-    string nombreMatriz;
-    bool cancelar = false;
-    int i = 0;
-    // buscar la matriz que se necesita para la operacion
-    misMatrices->buscarMatriz(cancelar, i, nombreMatriz);
-
-    if(cancelar) // se cancela la operacion ?
-        return;
-
-    double numero;
-    cout << "Ingrese el escalar: " << endl;
-    cin >> numero;
-
-    Matriz* temp = *(misMatrices->matrices[nombreMatriz]) * numero;
-    cout << "\nLa multiplicacion por el escalar es:" << endl;
-    temp->imprimirMatriz();
-    delete temp; // liberar memoria
-}
-
-void OperacMatrices::restarMatrices(OperacMatrices* misMatrices){
-    string nombreMatriz[2];
-    bool cancelar = false;
-    int i = 0;
-    // buscar las 2 matrices que se necesitan para la operacion
-    while (i < 2 && !cancelar){
-        misMatrices->buscarMatriz(cancelar, i, nombreMatriz[i]);
-        i++;
-    }
-
-    if(cancelar) // se cancela la operacion ?
-        return;
-
-    if(!(misMatrices->matrices[nombreMatriz[0]]->getOrden() == misMatrices->matrices[nombreMatriz[1]]->getOrden())){
-        cout << "No se puede operar, las matrices son de orden distinto..." << endl;
-        return;
-    }
-
-    Matriz* temp = *(misMatrices->matrices[nombreMatriz[0]]) - *(misMatrices->matrices[nombreMatriz[1]]);
-    cout << "\nLa resta de las matrices es:" << endl;
-    temp->imprimirMatriz();
-    delete temp;  // liberar memoria
-}
-
-void OperacMatrices::sumarMatrices(OperacMatrices* misMatrices){
-    string nombreMatriz[2];
-    bool cancelar = false;
-    int i = 0;
-    // buscar las 2 matrices que se necesitan para la operacion
-    while (i < 2 && !cancelar){
-        misMatrices->buscarMatriz(cancelar, i, nombreMatriz[i]);
-        i++;
-    }
-
-    if(cancelar) // se cancela la operacion ?
-        return;
-
-    if(!(misMatrices->matrices[nombreMatriz[0]]->getOrden() == misMatrices->matrices[nombreMatriz[1]]->getOrden())){
-        cout << "No se puede operar, las matrices son de orden distinto..." << endl;
-        return;
-    }
-
-    Matriz* temp = *(misMatrices->matrices[nombreMatriz[0]]) + *(misMatrices->matrices[nombreMatriz[1]]);
-    cout << "\nLa suma de las matrices es:" << endl;
-    temp->imprimirMatriz();
-    delete temp;  // liberar memoria
-}
-
-void OperacMatrices::salirMenuOper(OperacMatrices* /*misMatrices*/){
-    opMenu = true;
-};
-
-void OperacMatrices::agregarMatriz(int& orden, string&nombre){
-    Matriz* matriz = new Matriz(orden);
-    matriz->rellenarMatriz();
-    cout << "\nLa matriz ingresada tiene los valores es:" << endl;
-    matriz->imprimirMatriz();
-    matrices[nombre] = matriz;
-}
-
-void OperacMatrices::buscarMatriz(bool& cancelar, int& idMatriz, string& nombre){
-    bool matrizEncontrada = false;
-    int intentos = 2;
-    do{
-        cout << "\nIngrese el nombre de la matriz 0" << idMatriz+1 << ": " << endl;
-        cin.sync(); getline(cin,nombre);
-
-        if (this->matrices.count(nombre)){ // count() -> verifica si existe un item con X nombre
-            cout << "Sus elementos son:" << endl;
-            this->matrices[nombre]->imprimirMatriz();
-            matrizEncontrada = true;
-        } else {
-            cout << "La matriz '" << nombre <<"' no se encuentra...\n"
-                << "Le queda " << intentos << " intentos." << endl;
-
-            if(intentos == 0)
-                cancelar = true;
-
-            intentos--;
-        }
-    }while (intentos >= 0 && !matrizEncontrada);
-}
-
-/* implementación de los metodos de la clase  Matriz */
-Matriz* operator+(Matriz& matriz01, Matriz& matriz02){
-    int orden = matriz01.orden;
-    Matriz* resultado = new Matriz(orden);
-    for (int i = 0; i < orden; i++){
-        for (int j = 0; j < orden; j++){
-            resultado->M[i][j] = 0; // para evitar problemas primero llenamos la casilla con un valor
-            resultado->M[i][j] = matriz01.M[i][j] + matriz02.M[i][j];
-        }
-    }
-    return resultado;
-}
-
-Matriz* operator-(Matriz& matriz01, Matriz& matriz02){
-    int orden = matriz01.orden;
-    Matriz* resultado = new Matriz(orden);
-    for (int i = 0; i < orden; i++){
-        for (int j = 0; j < orden; j++){
-            resultado->M[i][j] = 0; // para evitar problemas primero llenamos la casilla con un valor
-            resultado->M[i][j] = matriz01.M[i][j] - matriz02.M[i][j];
-        }
-    }
-    return resultado;
-}
-
-Matriz* operator*(Matriz& matriz01, Matriz& matriz02){
-    //fuente: https://www.lawebdelprogramador.com/foros/Dev-C/1371193-MULTIPLICACION-DE-MATRICES.html
-    int orden = matriz01.orden;
-    int filas = orden, columnas = orden;
-    Matriz* resultado = new Matriz(orden);
-    // multiplicar matrices usando otra para almacenar datos
-    for(int i = 0; i < filas; i++){
-        for(int j = 0; j < columnas; j++){
-            resultado->M[i][j] = 0; // para evitar problemas primero llenamos la casilla con un valor
-            for(int z = 0; z < columnas; z++){
-                resultado->M[i][j] += matriz01.M[i][z] * matriz02.M[z][j];
-            }
-        }
-    }
-
-    return resultado;
-}
-
-Matriz* operator*(Matriz& matriz01, double numero){
-    int orden = matriz01.orden;
-    Matriz* resultado = new Matriz(orden);
-    for (int i = 0; i < orden; i++){
-        for (int j = 0; j < orden; j++){
-            resultado->M[i][j] = 0; // para evitar problemas primero llenamos la casilla con un valor
-            resultado->M[i][j] = matriz01.M[i][j] * numero;
-        }
-    }
-    return resultado;
-}
-
-Matriz* Matriz::traspuesta(){
-    Matriz* resultado = new Matriz(this->orden);
-    for (int i = 0; i < this->orden; i++){
-        for (int j = 0; j < this->orden; j++){
-            resultado->M[i][j] = this->M[j][i];
-        }
-    }
-    return resultado;
-}
-
-Matriz* Matriz::calcularInversa(double& deter){
-    Matriz* resultado = new Matriz(this->orden);
-    // encontramos la matriz de cofactores
-    for(int i = 0; i < this->orden; i++){
-        for(int j = 0; j < this->orden; j++){
-            resultado->M[i][j] = 0; // para evitar problemas primero llenamos la casilla con un valor
-            resultado->M[i][j] = cofactor(this->M, orden, i, j);
-        }
-    }
-    // hacemos la traspuesta de la matriz
-    Matriz* aux = resultado;
-    resultado = aux->traspuesta();
-    delete aux;
-    // aplicamos la multiplicacion por la determinante
-    for(int i = 0; i < this->orden; i++){
-        for(int j = 0; j < this->orden; j++){
-            resultado->M[i][j] = resultado->M[i][j] / deter;
-            // aplicamos 'trunc' para limitar los decimales
-            resultado->M[i][j] = trunc((resultado->M[i][j]) * 1000)/1000.0f;
-        }
-    }
-    return resultado;
-}
-
-double Matriz::cofactor(double** matriz, int orden, int fila, int columna){
-    int n = orden - 1;
-    double** submatriz = new double*[n];
-
-    for (int i = 0; i < n; i++)
-        submatriz[i] = new double[n];
-
-    int x = 0;
-    int y = 0;
-
-    for (int i = 0; i < orden; i++){
-        for (int j = 0; j < orden; j++){
-            if (i != fila && j != columna){
-                submatriz[x][y] = matriz[i][j];
-                y++;
-                if (y >= n){
-                    x++;
-                    y = 0;
-                }
-            }
-        }
-    }
-    int det = determinante(submatriz, n);
-    delete []submatriz; // liberar memoria
-    return pow(-1.0, fila + columna) * det;
-}
-
-double Matriz::determinante(double** matriz, int orden){
-    int det = 0;
-    if (orden == 1)
-        det = matriz[0][0];
-    else{
-        for (int j = 0; j < orden; j++)
-            det = det + matriz[0][j] * cofactor(matriz, orden, 0, j);
-    }
-    return det;
-}
-
-double Matriz::calcularDeterminante(){
-	/* fuentes:
-    https://www.youtube.com/watch?v=VMe384nPYi4
-    https://algoritmosyalgomas.com/determinante-de-una-matriz-de-cualquier-orden-c/#Codigo-fuente-en-C
-    */
-    double deter = determinante(M, orden);
-	return deter;
-}
-
-void Matriz::rellenarMatriz(){
-    random_device rd;
-    mt19937_64 generator(rd());
-    uniform_int_distribution<int> distribution(MIN, MAX);
-
-    for (int i = 0; i < orden; i++){
-        for (int j = 0; j < orden; j++){
-            M[i][j] = distribution(generator);
-        }
-    }
-}
-
-void Matriz::imprimirMatriz(int espacios){
-    for(int i = 0 ; i < orden ; i++){
-        cout << "|";
-        for(int j = 0 ; j < orden ; j++){
-            cout << setw(espacios) << M[i][j] << " ";
-        }
-        cout << "|" << endl;
-    }
-    cout << endl;
-}
-
-Matriz::Matriz(int orden){
-    this->orden = orden;
-    M = new double*[this->orden];
-    for(int i = 0; i < this->orden; i++)
-        M[i] = new double[this->orden];
-}
-
-Matriz::~Matriz(){
-    for (int i = 0; i < orden; i++)
-        delete[] M[i]; // liberar memoria de la segunda dimension
-
-    delete[] M; // liberar memoria de la primera dimension
 }

@@ -1,0 +1,7 @@
+Explicación de la estructura de carpetas
+
+./              -> ubicación del makefile(contiene las instrucciones para compilar)
+./documents/    -> contiene la documentación del proyecto
+./header/       -> contiene los archivos cabecera y fuente de nuevas clases que se usaran en el proyecto
+./lib/          -> contiene las librerias externas que se pueden usar en el programa
+./src/          -> contiene los archivos fuente principales que se usaran en la construcción del programa

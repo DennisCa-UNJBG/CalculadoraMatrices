@@ -1,0 +1,5 @@
+¿Cómo compilar el Proyecto?
+
+El presente proyecto se compila y ejecuta ingresando en una consola que ya se encuentre dentro de la carpeta raiz del proyecto lo siguiente:
+
+./compilar.sh

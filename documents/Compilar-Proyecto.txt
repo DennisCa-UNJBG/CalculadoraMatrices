@@ -7,3 +7,9 @@ El presente proyecto se compila y ejecuta ingresando en una consola que ya se en
 REQUISITOS:
 
 Para que funcione correctamente el comando " ./compilar.sh " se debe de instalar make en windows, para tal fin por favor siga la siguiente guía : https://parzibyte.me/blog/2020/12/30/instalar-make-windows/
+
+COMANDOS DISPONIBLES:
+
+- ./compilar.sh     -> comando encargado de compilar y ejecutar el proyecto
+- make              -> comando encargado solo de compilar el proyecto
+- make clean        -> comando encargado de eliminar el ejecutable y los archivos pre-compilados del proyecto

@@ -39,7 +39,7 @@ vector<OperMenu> MenuPrincipal = { // opciones del menu principal
 
 struct OperMenu02{  /* estructura para controlar las opciones del menu de operaciones */
     string opciones;
-    void (OperacMatrices::*method) (OperacMatrices* misMatrices);
+    void (OperacMatrices::*method) (void);
 };
 
 vector <OperMenu02> MenuOperaciones = { // opciones del menu de operaciones
@@ -79,7 +79,7 @@ void opcionSelecMenuOper(OperacMatrices* misMatrices, int opcion){
     if((size_t)opcion > MenuOperaciones.size() || opcion <= 0)
         cout << "ERROR: Valor ingresado no valido" << endl;
     else
-        (misMatrices->*MenuOperaciones[opcion-1].method)(misMatrices);
+        (misMatrices->*MenuOperaciones[opcion-1].method)();
 
     // no lanzar el pause si se elige la ultima opcion
     if((size_t)opcion != MenuOperaciones.size())

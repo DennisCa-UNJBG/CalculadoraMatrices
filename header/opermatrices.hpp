@@ -12,15 +12,15 @@ class OperacMatrices{ /* clase global de operaciones */
 public:
     map<string, Matriz*>matrices; // estructura clave/valor (contiene todas las matrices)
     void agregarMatriz(int& orden, string&nombre);
-    void buscarMatriz(bool& cancelar, int& idMatriz, string& nombre);
+    void buscarMatriz(bool& cancelar, int cantMatriz, string& nombre /* retorna el nombre de la matriz*/);
     //operaciones disponibles
-    void deterMatriz(OperacMatrices* misMatrices);
-    void inversaMatriz(OperacMatrices* misMatrices);
-    void sumarMatrices(OperacMatrices* misMatrices);
-    void restarMatrices(OperacMatrices* misMatrices);
-    void multiMatrices(OperacMatrices* misMatrices );
-    void multiEscalarMatriz(OperacMatrices* misMatrices);
-    void salirMenuOper(OperacMatrices* misMatrices);
+    void deterMatriz(void);
+    void inversaMatriz(void);
+    void sumarMatrices(void);
+    void restarMatrices(void);
+    void multiMatrices(void );
+    void multiEscalarMatriz(void);
+    void salirMenuOper(void);
     static bool openMenu;
 private:
 protected:

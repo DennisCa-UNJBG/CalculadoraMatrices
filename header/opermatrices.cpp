@@ -8,73 +8,70 @@ using std::endl;
 
 /* implementación de los metodos de la clase  OperacMatrices */
 
-void OperacMatrices::deterMatriz(OperacMatrices* misMatrices){
+void OperacMatrices::deterMatriz(void){
     string nombreMatriz;
     bool cancelar = false;
-    int i = 0;
     // buscar la matriz que se necesita para la operacion
-    misMatrices->buscarMatriz(cancelar, i, nombreMatriz);
+    this->buscarMatriz(cancelar, 1, nombreMatriz);
 
     if(!cancelar){
         cout << "La determinante de la matriz '" << nombreMatriz << "' es: "
-            << misMatrices->matrices[nombreMatriz]->calcularDeterminante()
+            << this->matrices[nombreMatriz]->calcularDeterminante()
             << endl;
     }
 }
 
-void OperacMatrices::inversaMatriz(OperacMatrices* misMatrices){
+void OperacMatrices::inversaMatriz(void){
     string nombreMatriz;
     bool cancelar = false;
-    int i = 0;
     // buscar la matriz que se necesita para la operacion
-    misMatrices->buscarMatriz(cancelar, i, nombreMatriz);
+    this->buscarMatriz(cancelar, 1, nombreMatriz);
 
     if(cancelar) // se cancela la operacion ?
         return;
 
-    double det = misMatrices->matrices[nombreMatriz]->calcularDeterminante();
+    double det = this->matrices[nombreMatriz]->calcularDeterminante();
     if(det == 0){
         cout << "La determinante es CERO, la matriz no tiene inversa..." << endl;
         return;
     }
 
-    Matriz* matriz = misMatrices->matrices[nombreMatriz]->calcularInversa(det);
+    Matriz* matriz = this->matrices[nombreMatriz]->calcularInversa(det);
     cout << "La inversa de la matriz '" << nombreMatriz << "' es :" << endl;
     matriz->imprimirMatriz(7);
     cout << "La determinante es: " << det << endl;
     delete matriz; // liberar memoria
 }
 
-void OperacMatrices::multiMatrices(OperacMatrices* misMatrices){
+void OperacMatrices::multiMatrices(void){
     string nombreMatriz[2];
     bool cancelar = false;
     int i = 0;
     // buscar las 2 matrices que se necesitan para la operacion
     while (i < 2 && !cancelar){
-        misMatrices->buscarMatriz(cancelar, i, nombreMatriz[i]);
+        this->buscarMatriz(cancelar, i+1, nombreMatriz[i]);
         i++;
     }
 
     if(cancelar) // se cancela la operacion ?
         return;
 
-    if(!(misMatrices->matrices[nombreMatriz[0]]->getOrden() == misMatrices->matrices[nombreMatriz[1]]->getOrden())){
+    if(!(this->matrices[nombreMatriz[0]]->getOrden() == this->matrices[nombreMatriz[1]]->getOrden())){
         cout << "No se puede operar, las matrices son de orden distinto..." << endl;
         return;
     }
 
-    Matriz* temp = *(misMatrices->matrices[nombreMatriz[0]]) * *(misMatrices->matrices[nombreMatriz[1]]);
-    cout << "\nLa multiplicacion de las matrices es:" << endl;
+    Matriz* temp = *(this->matrices[nombreMatriz[0]]) * *(this->matrices[nombreMatriz[1]]);
+    cout << "\nLa multiplicacion de las matrices ( " << nombreMatriz[0] << " * " << nombreMatriz[1] << " ) es:" << endl;
     temp->imprimirMatriz();
     delete temp; // liberar memoria
 }
 
-void OperacMatrices::multiEscalarMatriz(OperacMatrices* misMatrices){
+void OperacMatrices::multiEscalarMatriz(void){
     string nombreMatriz;
     bool cancelar = false;
-    int i = 0;
     // buscar la matriz que se necesita para la operacion
-    misMatrices->buscarMatriz(cancelar, i, nombreMatriz);
+    this->buscarMatriz(cancelar, 1, nombreMatriz);
 
     if(cancelar) // se cancela la operacion ?
         return;
@@ -83,61 +80,61 @@ void OperacMatrices::multiEscalarMatriz(OperacMatrices* misMatrices){
     cout << "Ingrese el escalar: " << endl;
     cin >> numero;
 
-    Matriz* temp = *(misMatrices->matrices[nombreMatriz]) * numero;
-    cout << "\nLa multiplicacion por el escalar es:" << endl;
+    Matriz* temp = *(this->matrices[nombreMatriz]) * numero;
+    cout << "\nLa multiplicacion de la matriz ( " << nombreMatriz << " * " << numero << " ) es:" << endl;
     temp->imprimirMatriz();
     delete temp; // liberar memoria
 }
 
-void OperacMatrices::restarMatrices(OperacMatrices* misMatrices){
+void OperacMatrices::restarMatrices(void){
     string nombreMatriz[2];
     bool cancelar = false;
     int i = 0;
     // buscar las 2 matrices que se necesitan para la operacion
     while (i < 2 && !cancelar){
-        misMatrices->buscarMatriz(cancelar, i, nombreMatriz[i]);
+        this->buscarMatriz(cancelar, i+1, nombreMatriz[i]);
         i++;
     }
 
     if(cancelar) // se cancela la operacion ?
         return;
 
-    if(!(misMatrices->matrices[nombreMatriz[0]]->getOrden() == misMatrices->matrices[nombreMatriz[1]]->getOrden())){
+    if(!(this->matrices[nombreMatriz[0]]->getOrden() == this->matrices[nombreMatriz[1]]->getOrden())){
         cout << "No se puede operar, las matrices son de orden distinto..." << endl;
         return;
     }
 
-    Matriz* temp = *(misMatrices->matrices[nombreMatriz[0]]) - *(misMatrices->matrices[nombreMatriz[1]]);
-    cout << "\nLa resta de las matrices es:" << endl;
+    Matriz* temp = *(this->matrices[nombreMatriz[0]]) - *(this->matrices[nombreMatriz[1]]);
+    cout << "\nLa resta de las matrices ( " << nombreMatriz[0] << " - " << nombreMatriz[1] << " ) es:" << endl;
     temp->imprimirMatriz();
     delete temp;  // liberar memoria
 }
 
-void OperacMatrices::sumarMatrices(OperacMatrices* misMatrices){
+void OperacMatrices::sumarMatrices(void){
     string nombreMatriz[2];
     bool cancelar = false;
     int i = 0;
     // buscar las 2 matrices que se necesitan para la operacion
     while (i < 2 && !cancelar){
-        misMatrices->buscarMatriz(cancelar, i, nombreMatriz[i]);
+        this->buscarMatriz(cancelar, i+1, nombreMatriz[i]);
         i++;
     }
 
     if(cancelar) // se cancela la operacion ?
         return;
 
-    if(!(misMatrices->matrices[nombreMatriz[0]]->getOrden() == misMatrices->matrices[nombreMatriz[1]]->getOrden())){
+    if(!(this->matrices[nombreMatriz[0]]->getOrden() == this->matrices[nombreMatriz[1]]->getOrden())){
         cout << "No se puede operar, las matrices son de orden distinto..." << endl;
         return;
     }
 
-    Matriz* temp = *(misMatrices->matrices[nombreMatriz[0]]) + *(misMatrices->matrices[nombreMatriz[1]]);
-    cout << "\nLa suma de las matrices es:" << endl;
+    Matriz* temp = *(this->matrices[nombreMatriz[0]]) + *(this->matrices[nombreMatriz[1]]);
+    cout << "\nLa suma de las matrices ( " << nombreMatriz[0] << " + " << nombreMatriz[1] << " ) es:" << endl;
     temp->imprimirMatriz();
     delete temp;  // liberar memoria
 }
 
-void OperacMatrices::salirMenuOper(OperacMatrices* /*misMatrices*/){
+void OperacMatrices::salirMenuOper(void){
     OperacMatrices::openMenu = true;
 }
 
@@ -149,11 +146,11 @@ void OperacMatrices::agregarMatriz(int& orden, string&nombre){
     matrices[nombre] = matriz;
 }
 
-void OperacMatrices::buscarMatriz(bool& cancelar, int& idMatriz, string& nombre){
+void OperacMatrices::buscarMatriz(bool& cancelar, int cantMatriz, string& nombre){
     bool matrizEncontrada = false;
     int intentos = 2;
     do{
-        cout << "\nIngrese el nombre de la matriz 0" << idMatriz+1 << ": " << endl;
+        cout << "\nIngrese el nombre de la matriz 0" << cantMatriz << ": " << endl;
         cin.sync(); getline(cin,nombre);
 
         if (this->matrices.count(nombre)){ // count() -> verifica si existe un item con X nombre

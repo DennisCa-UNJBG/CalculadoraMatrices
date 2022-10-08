@@ -3,3 +3,7 @@
 El presente proyecto se compila y ejecuta ingresando en una consola que ya se encuentre dentro de la carpeta raiz del proyecto lo siguiente:
 
 ./compilar.sh
+
+REQUISITOS:
+
+Para que funcione correctamente el comando " ./compilar.sh " se debe de instalar make en windows, para tal fin por favor siga la siguiente guía : https://parzibyte.me/blog/2020/12/30/instalar-make-windows/

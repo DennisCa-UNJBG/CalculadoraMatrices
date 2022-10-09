@@ -18,10 +18,9 @@ const int MAX = 10; // maximo valor aleatorio
 
 /* implementación de los metodos de la clase  Matriz */
 Matriz* operator+(Matriz& matriz01, Matriz& matriz02){
-    int orden = matriz01.orden;
-    Matriz* resultado = new Matriz(orden);
-    for (int i = 0; i < orden; i++){
-        for (int j = 0; j < orden; j++){
+    Matriz* resultado = new Matriz(matriz01.filas, matriz01.columnas);
+    for (int i = 0; i < matriz01.filas; i++){
+        for (int j = 0; j < matriz01.columnas; j++){
             resultado->M[i][j] = 0; // para evitar problemas primero llenamos la casilla con un valor
             resultado->M[i][j] = matriz01.M[i][j] + matriz02.M[i][j];
         }
@@ -30,10 +29,9 @@ Matriz* operator+(Matriz& matriz01, Matriz& matriz02){
 }
 
 Matriz* operator-(Matriz& matriz01, Matriz& matriz02){
-    int orden = matriz01.orden;
-    Matriz* resultado = new Matriz(orden);
-    for (int i = 0; i < orden; i++){
-        for (int j = 0; j < orden; j++){
+    Matriz* resultado = new Matriz(matriz01.filas, matriz01.columnas);
+    for (int i = 0; i < matriz01.filas; i++){
+        for (int j = 0; j < matriz01.columnas; j++){
             resultado->M[i][j] = 0; // para evitar problemas primero llenamos la casilla con un valor
             resultado->M[i][j] = matriz01.M[i][j] - matriz02.M[i][j];
         }
@@ -60,12 +58,13 @@ Matriz* operator*(Matriz& matriz01, Matriz& matriz02){
 }
 
 Matriz* operator*(Matriz& matriz01, double numero){
-    int orden = matriz01.orden;
-    Matriz* resultado = new Matriz(orden);
-    for (int i = 0; i < orden; i++){
-        for (int j = 0; j < orden; j++){
+    Matriz* resultado = new Matriz(matriz01.filas, matriz01.columnas);
+    for (int i = 0; i < matriz01.filas; i++){
+        for (int j = 0; j < matriz01.columnas; j++){
             resultado->M[i][j] = 0; // para evitar problemas primero llenamos la casilla con un valor
             resultado->M[i][j] = matriz01.M[i][j] * numero;
+            // aplicamos 'trunc' para limitar los decimales
+            resultado->M[i][j] = trunc((resultado->M[i][j]) * 1000)/1000.0f;
         }
     }
     return resultado;
@@ -148,7 +147,7 @@ double Matriz::calcularDeterminante(){
     https://www.youtube.com/watch?v=VMe384nPYi4
     https://algoritmosyalgomas.com/determinante-de-una-matriz-de-cualquier-orden-c/#Codigo-fuente-en-C
     */
-    double deter = determinante(M, orden);
+    double deter = (this->getIsCuadrado()) ? determinante(M, orden) : 0 ;
 	return deter;
 }
 
@@ -157,29 +156,41 @@ void Matriz::rellenarMatriz(){
     mt19937_64 generator(rd());
     uniform_int_distribution<int> distribution(MIN, MAX);
 
-    for (int i = 0; i < orden; i++){
-        for (int j = 0; j < orden; j++){
+    for (int i = 0; i < filas; i++){
+        for (int j = 0; j < columnas; j++){
             M[i][j] = distribution(generator);
         }
     }
 }
 
 void Matriz::imprimirMatriz(int espacios){
-    for(int i = 0 ; i < orden ; i++){
+    for(int i = 0 ; i < filas ; i++){
         cout << "|";
-        for(int j = 0 ; j < orden ; j++){
+        for(int j = 0 ; j < columnas ; j++){
             cout << setw(espacios) << M[i][j] << " ";
-        }
+            }
         cout << "|" << endl;
     }
     cout << endl;
 }
 
 Matriz::Matriz(int orden){
+    this->isCuadrado = true;
     this->orden = orden;
+    this->filas = orden;
+    this->columnas = orden;
     M = new double*[this->orden];
     for(int i = 0; i < this->orden; i++)
         M[i] = new double[this->orden];
+}
+
+Matriz::Matriz(int filas, int columnas){
+    this->orden = filas; // para establecer compatibilidad con el código anterior
+    this->filas = filas;
+    this->columnas = columnas;
+    M = new double*[this->filas];
+    for(int i = 0; i < this->filas; i++)
+        M[i] = new double[this->columnas];
 }
 
 Matriz::~Matriz(){

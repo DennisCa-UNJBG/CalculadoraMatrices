@@ -120,14 +120,16 @@ void abrirMenuOpMatrices(OperacMatrices* /*misMatrices*/, int /*opcion*/){
 
 void crearMatriz(OperacMatrices* misMatrices, int /*opcion*/){ // se omite la variable opcion en la compilacion del programa
     string nombre;
-    int orden;
+    int filas, columnas;
     cout << "Ingrese un nombre(sin espacios) para la matriz:" << endl;
     cin.sync(); getline(cin,nombre);
 
-    cout << "Ingrese dimension de la matriz: " << endl;
-    cin >> orden;
+    cout << "Ingrese la cantidad de la filas de la matriz: " << endl;
+    cin >> filas;
+    cout << "Ingrese la cantidad de la columnas de la matriz: " << endl;
+    cin >> columnas;
 
-    misMatrices->agregarMatriz(orden, nombre);
+    misMatrices->agregarMatriz(filas, columnas, nombre) ;
 }
 
 void opcionSelecMenuPrinc(OperacMatrices* misMatrices, int opcion){

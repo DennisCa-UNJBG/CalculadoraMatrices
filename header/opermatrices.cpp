@@ -31,6 +31,12 @@ void OperacMatrices::inversaMatriz(void){
         return;
 
     double det = this->matrices[nombreMatriz]->calcularDeterminante();
+
+    if(!this->matrices[nombreMatriz]->getIsCuadrado()){
+        cout << "La matriz '" << nombreMatriz << "' no es cuadrada y no tiene inversa..." << endl;
+        return;
+    }
+
     if(det == 0){
         cout << "La determinante es CERO, la matriz no tiene inversa..." << endl;
         return;
@@ -56,15 +62,17 @@ void OperacMatrices::multiMatrices(void){
     if(cancelar) // se cancela la operacion ?
         return;
 
-    if(!(this->matrices[nombreMatriz[0]]->getOrden() == this->matrices[nombreMatriz[1]]->getOrden())){
-        cout << "No se puede operar, las matrices son de orden distinto..." << endl;
+    if(this->noCumpleReqMulti(nombreMatriz[0], nombreMatriz[1]))
         return;
-    }
 
-    Matriz* temp = *(this->matrices[nombreMatriz[0]]) * *(this->matrices[nombreMatriz[1]]);
-    cout << "\nLa multiplicacion de las matrices ( " << nombreMatriz[0] << " * " << nombreMatriz[1] << " ) es:" << endl;
-    temp->imprimirMatriz();
-    delete temp; // liberar memoria
+    if(this->matrices[nombreMatriz[0]]->getIsCuadrado() && this->matrices[nombreMatriz[1]]->getIsCuadrado()){
+        Matriz* temp = *(this->matrices[nombreMatriz[0]]) * *(this->matrices[nombreMatriz[1]]);
+        cout << "\nLa multiplicacion de las matrices ( " << nombreMatriz[0] << " * " << nombreMatriz[1] << " ) es:" << endl;
+        temp->imprimirMatriz();
+        delete temp; // liberar memoria
+    } else {
+        cout << "Por el momento es imposible operar este tipo de matrices ... " << endl;
+    }
 }
 
 void OperacMatrices::multiEscalarMatriz(void){
@@ -82,7 +90,7 @@ void OperacMatrices::multiEscalarMatriz(void){
 
     Matriz* temp = *(this->matrices[nombreMatriz]) * numero;
     cout << "\nLa multiplicacion de la matriz ( " << nombreMatriz << " * " << numero << " ) es:" << endl;
-    temp->imprimirMatriz();
+    temp->imprimirMatriz(7);
     delete temp; // liberar memoria
 }
 
@@ -99,10 +107,8 @@ void OperacMatrices::restarMatrices(void){
     if(cancelar) // se cancela la operacion ?
         return;
 
-    if(!(this->matrices[nombreMatriz[0]]->getOrden() == this->matrices[nombreMatriz[1]]->getOrden())){
-        cout << "No se puede operar, las matrices son de orden distinto..." << endl;
+    if(this->noCumpleReqSumRest(nombreMatriz[0], nombreMatriz[1]))
         return;
-    }
 
     Matriz* temp = *(this->matrices[nombreMatriz[0]]) - *(this->matrices[nombreMatriz[1]]);
     cout << "\nLa resta de las matrices ( " << nombreMatriz[0] << " - " << nombreMatriz[1] << " ) es:" << endl;
@@ -123,10 +129,8 @@ void OperacMatrices::sumarMatrices(void){
     if(cancelar) // se cancela la operacion ?
         return;
 
-    if(!(this->matrices[nombreMatriz[0]]->getOrden() == this->matrices[nombreMatriz[1]]->getOrden())){
-        cout << "No se puede operar, las matrices son de orden distinto..." << endl;
+    if(this->noCumpleReqSumRest(nombreMatriz[0], nombreMatriz[1]))
         return;
-    }
 
     Matriz* temp = *(this->matrices[nombreMatriz[0]]) + *(this->matrices[nombreMatriz[1]]);
     cout << "\nLa suma de las matrices ( " << nombreMatriz[0] << " + " << nombreMatriz[1] << " ) es:" << endl;
@@ -138,8 +142,9 @@ void OperacMatrices::salirMenuOper(void){
     OperacMatrices::openMenu = true;
 }
 
-void OperacMatrices::agregarMatriz(int& orden, string&nombre){
-    Matriz* matriz = new Matriz(orden);
+void OperacMatrices::agregarMatriz(int& filas, int& columnas, string&nombre){
+    Matriz* matriz;                 //crear matriz cuadrada         // crear matriz no cuadrada
+    (filas == columnas) ? matriz = new Matriz(filas) : matriz = new Matriz(filas, columnas);
     matriz->rellenarMatriz();
     cout << "\nLa matriz ingresada tiene los valores es:" << endl;
     matriz->imprimirMatriz();
@@ -167,4 +172,35 @@ void OperacMatrices::buscarMatriz(bool& cancelar, int cantMatriz, string& nombre
             intentos--;
         }
     }while (intentos >= 0 && !matrizEncontrada);
+}
+
+bool OperacMatrices::noCumpleReqSumRest(string& Matriz01, string& Matriz02){
+    if((this->matrices[Matriz01]->getIsCuadrado() && this->matrices[Matriz02]->getIsCuadrado())){
+        if(this->matrices[Matriz01]->getOrden() != this->matrices[Matriz02]->getOrden()){
+        cout << "No se puede operar, las matrices son de dimensiones distintas..." << endl;
+        return true; // no cumple todos los requisitos de matrices NxN
+        }
+    } else {
+        if(this->matrices[Matriz01]->getFilas() != this->matrices[Matriz02]->getFilas() ||
+            this->matrices[Matriz01]->getColumnas() != this->matrices[Matriz02]->getColumnas()){
+            cout << "No se puede operar, las matrices son de orden distinto..." << endl;
+            return true; // nocumple todos los requisitos de matrices NxM
+        }
+    }
+    return false; // cumple todos los requisitos
+}
+
+bool OperacMatrices::noCumpleReqMulti(string& Matriz01, string& Matriz02){
+    if((this->matrices[Matriz01]->getIsCuadrado() && this->matrices[Matriz02]->getIsCuadrado())){
+        if(this->matrices[Matriz01]->getOrden() != this->matrices[Matriz02]->getOrden()){
+        cout << "No se puede operar, las matrices son de dimensiones distintas..." << endl;
+        return true; // no cumple todos los requisitos de matrices NxN
+        }
+    } else {
+        if(this->matrices[Matriz01]->getFilas() != this->matrices[Matriz02]->getColumnas()){
+            cout << "No se puede operar, las matrices son de orden distinto..." << endl;
+            return true; // nocumple todos los requisitos de matrices NxM
+        }
+    }
+    return false; // cumple todos los requisitos
 }

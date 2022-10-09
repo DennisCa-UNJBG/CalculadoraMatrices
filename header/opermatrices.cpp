@@ -14,11 +14,17 @@ void OperacMatrices::deterMatriz(void){
     // buscar la matriz que se necesita para la operacion
     this->buscarMatriz(cancelar, 1, nombreMatriz);
 
-    if(!cancelar){
-        cout << "La determinante de la matriz '" << nombreMatriz << "' es: "
-            << this->matrices[nombreMatriz]->calcularDeterminante()
-            << endl;
+    if(cancelar)
+        return;
+
+    if(!this->matrices[nombreMatriz]->getIsCuadrado()){
+        cout <<  "La matriz '" << nombreMatriz << "' no tiene determinante, no es cuadrada... " << endl;
+        return;
     }
+
+    cout << "La determinante de la matriz '" << nombreMatriz << "' es: "
+        << this->matrices[nombreMatriz]->calcularDeterminante()
+        << endl;
 }
 
 void OperacMatrices::inversaMatriz(void){
@@ -30,13 +36,12 @@ void OperacMatrices::inversaMatriz(void){
     if(cancelar) // se cancela la operacion ?
         return;
 
-    double det = this->matrices[nombreMatriz]->calcularDeterminante();
-
     if(!this->matrices[nombreMatriz]->getIsCuadrado()){
-        cout << "La matriz '" << nombreMatriz << "' no es cuadrada y no tiene inversa..." << endl;
+        cout << "La matriz '" << nombreMatriz << "' no tiene inversa, no es cuadrada..." << endl;
         return;
     }
 
+    double det = this->matrices[nombreMatriz]->calcularDeterminante();
     if(det == 0){
         cout << "La determinante es CERO, la matriz no tiene inversa..." << endl;
         return;

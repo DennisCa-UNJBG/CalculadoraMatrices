@@ -1,6 +1,7 @@
 #include <iostream>
-#include <matriz.hpp>
-#include <opermatrices.hpp>
+// incluir librerias custom
+#include "matriz.hpp"
+#include "opermatrices.hpp"
 
 using std::cout;
 using std::cin;

@@ -2,7 +2,7 @@
 #include <cmath>
 #include <random> // generar numeros aleatorios
 #include <iomanip> // crear una tabla
-
+// incluir librerias custom
 #include <matriz.hpp>
 
 using std::cout;

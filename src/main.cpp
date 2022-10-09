@@ -2,7 +2,7 @@
 #include <map>
 #include <iostream>
 #include <sstream> // convertir string a int
-
+#include <raylib.h>
 // incluir librerias custom
 #include <matriz.hpp>
 #include <opermatrices.hpp>
@@ -53,6 +53,41 @@ vector <OperMenu02> MenuOperaciones = { // opciones del menu de operaciones
 }; // empleamos los punteros a metodos de clase
 
 int main(/*int argc, char *argv[]*/){ /* programa principal */
+    // Initialization
+    //--------------------------------------------------------------------------------------
+    const int anchoVentana = 800;
+    const int altooVentana = 450;
+                                            // titulo de la ventana
+    InitWindow(anchoVentana, altooVentana, "RAYLIB [core] - Calculadora de Matrices");
+
+    SetTargetFPS(60);               // limite en los FPS por segundo  ¡NO BORRAR!
+    //--------------------------------------------------------------------------------------
+
+    // Main window loop
+    while (!WindowShouldClose())    // Detect window close button or ESC key
+    {
+        // Update
+        //----------------------------------------------------------------------------------
+        // TODO: Actualizat variables aquí
+        //----------------------------------------------------------------------------------
+
+        // Draw/Dibujado de elementos en la ventana
+        //----------------------------------------------------------------------------------
+        BeginDrawing();
+
+            ClearBackground(LIGHTGRAY); // color de fonde de la ventana
+
+            DrawText("Ejecutando una ventana de Raylib", 190, 200, 20, BLACK);
+
+        EndDrawing();
+        //----------------------------------------------------------------------------------
+    }
+
+    // De-Initialization
+    //--------------------------------------------------------------------------------------
+    CloseWindow();        // Close window and OpenGL context
+    //--------------------------------------------------------------------------------------
+    /*
     OperacMatrices misMatrices = OperacMatrices();
     while(ejecutando){
         system("cls");
@@ -71,6 +106,7 @@ int main(/*int argc, char *argv[]*/){ /* programa principal */
 
         OperacMatrices::openMenu ? opcionSelecMenuPrinc(&misMatrices, iOpcion) : opcionSelecMenuOper(&misMatrices, iOpcion);
     }
+    */
     return 0;
 }
 

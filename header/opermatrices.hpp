@@ -3,7 +3,8 @@
 
 #include <map>
 #include <string>
-#include <matriz.hpp>
+// incluir librerias custom
+#include "matriz.hpp"
 
 using std::map;
 using std::string;

@@ -3,5 +3,7 @@ Explicación de la estructura de carpetas
 ./              -> ubicación del makefile(contiene las instrucciones para compilar)
 ./documents/    -> contiene la documentación del proyecto
 ./header/       -> contiene los archivos cabecera y fuente de nuevas clases que se usaran en el proyecto
+                   Actualmente contiene las cabeceras de las clases matriz y opermatrices y la libreria Raylib
 ./lib/          -> contiene las librerias externas que se pueden usar en el programa
+                   Actualmente contiene la libreria Raylib : https://www.raylib.com/
 ./src/          -> contiene los archivos fuente principales que se usaran en la construcción del programa

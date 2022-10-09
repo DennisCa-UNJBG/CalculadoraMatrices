@@ -65,14 +65,10 @@ void OperacMatrices::multiMatrices(void){
     if(this->noCumpleReqMulti(nombreMatriz[0], nombreMatriz[1]))
         return;
 
-    if(this->matrices[nombreMatriz[0]]->getIsCuadrado() && this->matrices[nombreMatriz[1]]->getIsCuadrado()){
-        Matriz* temp = *(this->matrices[nombreMatriz[0]]) * *(this->matrices[nombreMatriz[1]]);
-        cout << "\nLa multiplicacion de las matrices ( " << nombreMatriz[0] << " * " << nombreMatriz[1] << " ) es:" << endl;
-        temp->imprimirMatriz();
-        delete temp; // liberar memoria
-    } else {
-        cout << "Por el momento es imposible operar este tipo de matrices ... " << endl;
-    }
+    Matriz* temp = *(this->matrices[nombreMatriz[0]]) * *(this->matrices[nombreMatriz[1]]);
+    cout << "\nLa multiplicacion de las matrices ( " << nombreMatriz[0] << " * " << nombreMatriz[1] << " ) es:" << endl;
+    temp->imprimirMatriz();
+    delete temp; // liberar memoria
 }
 
 void OperacMatrices::multiEscalarMatriz(void){
@@ -183,7 +179,7 @@ bool OperacMatrices::noCumpleReqSumRest(string& Matriz01, string& Matriz02){
     } else {
         if(this->matrices[Matriz01]->getFilas() != this->matrices[Matriz02]->getFilas() ||
             this->matrices[Matriz01]->getColumnas() != this->matrices[Matriz02]->getColumnas()){
-            cout << "No se puede operar, las matrices son de orden distinto..." << endl;
+            cout << "No se puede operar, las matrices no coinciden en sus dimensiones..." << endl;
             return true; // nocumple todos los requisitos de matrices NxM
         }
     }
@@ -197,8 +193,9 @@ bool OperacMatrices::noCumpleReqMulti(string& Matriz01, string& Matriz02){
         return true; // no cumple todos los requisitos de matrices NxN
         }
     } else {
-        if(this->matrices[Matriz01]->getFilas() != this->matrices[Matriz02]->getColumnas()){
-            cout << "No se puede operar, las matrices son de orden distinto..." << endl;
+        if(this->matrices[Matriz01]->getColumnas() != this->matrices[Matriz02]->getFilas()){
+            cout << "No se puede operar, las columnas de la matriz'" << Matriz01
+                << "' y las filas de la matriz '" << Matriz02 << "' no coinciden ..." << endl;
             return true; // nocumple todos los requisitos de matrices NxM
         }
     }

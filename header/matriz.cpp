@@ -40,16 +40,29 @@ Matriz* operator-(Matriz& matriz01, Matriz& matriz02){
 }
 
 Matriz* operator*(Matriz& matriz01, Matriz& matriz02){
-    //fuente: https://www.lawebdelprogramador.com/foros/Dev-C/1371193-MULTIPLICACION-DE-MATRICES.html
-    int orden = matriz01.orden;
-    int filas = orden, columnas = orden;
-    Matriz* resultado = new Matriz(orden);
-    // multiplicar matrices usando otra para almacenar datos
-    for(int i = 0; i < filas; i++){
-        for(int j = 0; j < columnas; j++){
-            resultado->M[i][j] = 0; // para evitar problemas primero llenamos la casilla con un valor
-            for(int z = 0; z < columnas; z++){
-                resultado->M[i][j] += matriz01.M[i][z] * matriz02.M[z][j];
+    Matriz* resultado;
+    if(matriz01.getIsCuadrado() && matriz02.getIsCuadrado()){ // la matriz es cuadrada ?
+        //fuente: https://www.lawebdelprogramador.com/foros/Dev-C/1371193-MULTIPLICACION-DE-MATRICES.html
+        resultado = new Matriz(matriz01.orden);
+        // multiplicar matrices usando otra para almacenar datos
+        for(int i = 0; i < matriz01.orden; i++){
+            for(int j = 0; j < matriz01.orden; j++){
+                resultado->M[i][j] = 0; // para evitar problemas primero llenamos la casilla con un valor
+                for(int z = 0; z < matriz01.orden; z++){
+                    resultado->M[i][j] += matriz01.M[i][z] * matriz02.M[z][j];
+                }
+            }
+        }
+    } else { // fuente: https://www.youtube.com/watch?v=Tjrm3HsqBXE
+        // toma la cantidad de filas de la primera matriz
+        // toma la cantidad de columnas de la segunda matriz
+        resultado = new Matriz(matriz01.filas, matriz02.columnas);
+        for(int i = 0; i < matriz01.filas; i++){
+            for(int j = 0; j < matriz02.columnas; j++){
+                resultado->M[i][j] = 0; // para evitar problemas primero llenamos la casilla con un valor
+                for(int z = 0; z < matriz01.columnas; z++){
+                    resultado->M[i][j] += matriz01.M[i][z] * matriz02.M[z][j];
+                }
             }
         }
     }

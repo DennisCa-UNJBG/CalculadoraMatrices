@@ -2,6 +2,7 @@
 #include <map>
 #include <iostream>
 #include <sstream> // convertir string a int
+// raylib
 #include <raylib.h>
 // incluir librerias custom
 #include <matriz.hpp>
@@ -14,8 +15,8 @@ bool ejecutando = true; // variable global que mantiene vivo el programa
 bool OperacMatrices::openMenu = true; // true -> menu 01 , false -> menu 02
 
 /* opciones del menu principal */
-void menuPrincipal();
-void menuOperacMatrices();
+void menuPrincipal(vector<Rectangle>& botonesMenuPrincipal, int& mouseHoverRec);
+void menuOperacMatrices(vector<Rectangle>& botonesMenuOperaciones, int& mouseHoverRec);
 void opcionSelecMenuPrinc(OperacMatrices* misMatrices, int opcion);
 void crearMatriz(OperacMatrices* misMatrices, int opcion);
 void abrirMenuOpMatrices(OperacMatrices* misMatrices, int opcion);
@@ -24,6 +25,8 @@ void salirPrograma(OperacMatrices* misMatrices, int opcion);
 
 /* opciones del menu secundario(operaciones) */
 void opcionSelecMenuOper(OperacMatrices* misMatrices, int opcion);
+/* raylib */
+void selecMouse(vector<Rectangle>& botonesMenuPrincipal, int& mouseHoverRec);
 
 struct OperMenu{ /* estructura para controlar las opciones del menu principal */
     string opciones;
@@ -43,41 +46,60 @@ struct OperMenu02{  /* estructura para controlar las opciones del menu de operac
 };
 
 vector <OperMenu02> MenuOperaciones = { // opciones del menu de operaciones
-    { "Calcular la inversa de una matriz",       &OperacMatrices::inversaMatriz }, // 1 matriz X
-    { "Calcular la determinante de una matriz",  &OperacMatrices::deterMatriz }, // 1 matriz X
-    { "Sumar matrices",                          &OperacMatrices::sumarMatrices }, // 2 matrices
-    { "Restar matrices",                         &OperacMatrices::restarMatrices }, // 2 matrices
-    { "multiplar matrices",                      &OperacMatrices::multiMatrices }, // 2 matrices
-    { "multiplar matriz por un escalar",         &OperacMatrices::multiEscalarMatriz }, // 1 matriz X y 1 entero
-    { "Regresar al menu Principal",              &OperacMatrices::salirMenuOper } // cambiar variable global
+    { "Calcular la inversa",            &OperacMatrices::inversaMatriz }, // 1 matriz X
+    { "Calcular la determinante",       &OperacMatrices::deterMatriz }, // 1 matriz X
+    { "Sumar matrices",                 &OperacMatrices::sumarMatrices }, // 2 matrices
+    { "Restar matrices",                &OperacMatrices::restarMatrices }, // 2 matrices
+    { "Multiplicar matrices",           &OperacMatrices::multiMatrices }, // 2 matrices
+    { "Multiplicar por escalar",        &OperacMatrices::multiEscalarMatriz }, // 1 matriz X y 1 entero
+    { "Menu anterior",                  &OperacMatrices::salirMenuOper } // cambiar variable global
 }; // empleamos los punteros a metodos de clase
 
 int main(/*int argc, char *argv[]*/){ /* programa principal */
     // Initialization
     //--------------------------------------------------------------------------------------
-    const int anchoVentana = 800;
-    const int altooVentana = 450;
+    const int anchoVentana = 1000;
+    const int altooVentana = 600;
+    int mouseHoverRec = -1;
                                             // titulo de la ventana
     InitWindow(anchoVentana, altooVentana, "RAYLIB [core] - Calculadora de Matrices");
 
     SetTargetFPS(60);               // limite en los FPS por segundo  ¡NO BORRAR!
     //--------------------------------------------------------------------------------------
 
+    // sector de operaciones
+    Rectangle cuadradoOper = Rectangle{0.0f, 0.0f, 320.0f, 600.0f};
+    // crear botones menu principal
+    vector<Rectangle> botonesMenuPrincipal;
+    for (size_t i = 0; i < MenuPrincipal.size(); i++)
+        botonesMenuPrincipal.push_back({ 20.0f, (float)(80 + 60*i), 280.0f, 40.0f });
+
+    // crear botones menu de operaciones
+    vector<Rectangle> botonesMenuOperaciones;
+    for (size_t i = 0; i < MenuOperaciones.size(); i++)
+        botonesMenuOperaciones.push_back({ 20.0f, (float)(80 + 60*i), 280.0f, 40.0f });
+
     // Main window loop
-    while (!WindowShouldClose())    // Detect window close button or ESC key
+    while (!WindowShouldClose())
     {
         // Update
         //----------------------------------------------------------------------------------
         // TODO: Actualizat variables aquí
         //----------------------------------------------------------------------------------
+        selecMouse(botonesMenuPrincipal, mouseHoverRec);
 
         // Draw/Dibujado de elementos en la ventana
         //----------------------------------------------------------------------------------
         BeginDrawing();
 
-            ClearBackground(LIGHTGRAY); // color de fonde de la ventana
+        ClearBackground(LIGHTGRAY); // color de fonde de la ventana
 
-            DrawText("Ejecutando una ventana de Raylib", 190, 200, 20, BLACK);
+        DrawRectangleRec(cuadradoOper, GRAY);
+        DrawText("MENU:", 100, 30, 40, DARKBLUE);
+        menuPrincipal(botonesMenuPrincipal, mouseHoverRec);
+        //menuOperacMatrices(botonesMenuOperaciones, mouseHoverRec);
+
+        DrawText("Ejecutando una ventana de Raylib", 340, 100, 20, BLACK);
 
         EndDrawing();
         //----------------------------------------------------------------------------------
@@ -151,7 +173,7 @@ void verMatrices(OperacMatrices* misMatrices, int /*opcion*/){
 void abrirMenuOpMatrices(OperacMatrices* /*misMatrices*/, int /*opcion*/){
     OperacMatrices::openMenu = false;
     system("cls");
-    menuOperacMatrices();
+    //menuOperacMatrices();
 }
 
 void crearMatriz(OperacMatrices* misMatrices, int /*opcion*/){ // se omite la variable opcion en la compilacion del programa
@@ -179,20 +201,39 @@ void opcionSelecMenuPrinc(OperacMatrices* misMatrices, int opcion){
         system("pause");
 }
 
-void menuOperacMatrices(){
-    cout << "\n\tOPERACIONES CON MATRICES\n"
-        << "******************************\n"
-        << endl;
-
-    for(size_t i = 0; i < MenuOperaciones.size(); i++)
-        cout << i+1 << ". " << MenuOperaciones[i].opciones << endl;
+void menuOperacMatrices(vector<Rectangle>& botonesMenuOperaciones, int& mouseHoverRec){
+    for (size_t i = 0; i < MenuOperaciones.size(); i++){
+        DrawRectangleRec(botonesMenuOperaciones[i], ((int)i == mouseHoverRec) ? SKYBLUE : LIGHTGRAY);
+        DrawRectangleLines((int)botonesMenuOperaciones[i].x, (int)botonesMenuOperaciones[i].y, (int)botonesMenuOperaciones[i].width, (int)botonesMenuOperaciones[i].height, BLUE);
+        DrawText( MenuOperaciones[i].opciones.c_str(), (int)( botonesMenuOperaciones[i].x + botonesMenuOperaciones[i].width/2 - MeasureText(MenuOperaciones[i].opciones.c_str(), 20)/2), (int) botonesMenuOperaciones[i].y + 11, 20, DARKBLUE);
+    }
 }
 
-void menuPrincipal(){
-    cout << "\n\tMENU PRINCIPAL\n"
-        << "******************************\n"
-        << endl;
+void menuPrincipal(vector<Rectangle>& botonesMenuPrincipal, int& mouseHoverRec){
+    for (size_t i = 0; i < MenuPrincipal.size(); i++){
+        DrawRectangleRec(botonesMenuPrincipal[i], ((int)i == mouseHoverRec) ? SKYBLUE : LIGHTGRAY);
+        DrawRectangleLines((int)botonesMenuPrincipal[i].x, (int)botonesMenuPrincipal[i].y, (int)botonesMenuPrincipal[i].width, (int)botonesMenuPrincipal[i].height, BLUE);
+        DrawText( MenuPrincipal[i].opciones.c_str(), (int)( botonesMenuPrincipal[i].x + botonesMenuPrincipal[i].width/2 - MeasureText(MenuPrincipal[i].opciones.c_str(), 20)/2), (int) botonesMenuPrincipal[i].y + 11, 20, DARKBLUE);
+    }
+}
 
-    for(size_t i = 0; i < MenuPrincipal.size(); i++)
-        cout << i+1 << ". " << MenuPrincipal[i].opciones << endl;
+void selecMouse(vector<Rectangle>& botonesMenuPrincipal, int& mouseHoverRec){
+        for (size_t i = 0; i < MenuPrincipal.size(); i++)
+        {
+            if (CheckCollisionPointRec(GetMousePosition(), botonesMenuPrincipal[i]))
+            {
+                mouseHoverRec = i;
+
+                if (IsMouseButtonReleased(MOUSE_BUTTON_LEFT))
+                {
+                    /*
+                    currentProcess = i;
+                    textureReload = true;
+                    */
+                    cout << "Seleciono menu: " << i << endl;
+                }
+                break;
+            }
+            else mouseHoverRec = -1;
+        }
 }

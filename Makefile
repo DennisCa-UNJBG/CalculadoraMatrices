@@ -1,5 +1,6 @@
 ROOT:= $(PWD);
 FLAGS = -Wall -Wpedantic -Werror -Wextra -g -std=c++11 -O3
+#FLAGS = -Wall -Wpedantic -Wextra -g -std=c++11 -O3
 HEADERS := -Iheader
 
 #está variable contiene todos los archivos pre-compilados que necesitamos para enlazar las funciones y crear un ejecutable

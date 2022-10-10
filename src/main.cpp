@@ -25,8 +25,6 @@ void salirPrograma(OperacMatrices* misMatrices, int opcion);
 
 /* opciones del menu secundario(operaciones) */
 void opcionSelecMenuOper(OperacMatrices* misMatrices, int opcion);
-/* raylib */
-void selecMouse(vector<Rectangle>& botonesMenuPrincipal, int& mouseHoverRec);
 
 struct OperMenu{ /* estructura para controlar las opciones del menu principal */
     string opciones;
@@ -55,6 +53,10 @@ vector <OperMenu02> MenuOperaciones = { // opciones del menu de operaciones
     { "Menu anterior",                  &OperacMatrices::salirMenuOper } // cambiar variable global
 }; // empleamos los punteros a metodos de clase
 
+/* raylib */
+void selecMouse(vector<Rectangle>& botones, vector<OperMenu>& menu, int& mouseHoverRec);
+void selecMouse02(vector<Rectangle>& botones, vector<OperMenu02>& menu, int& mouseHoverRec);
+
 int main(/*int argc, char *argv[]*/){ /* programa principal */
     // Initialization
     //--------------------------------------------------------------------------------------
@@ -65,7 +67,6 @@ int main(/*int argc, char *argv[]*/){ /* programa principal */
     InitWindow(anchoVentana, altooVentana, "RAYLIB [core] - Calculadora de Matrices");
 
     SetTargetFPS(60);               // limite en los FPS por segundo  ¡NO BORRAR!
-    //--------------------------------------------------------------------------------------
 
     // sector de operaciones
     Rectangle cuadradoOper = Rectangle{0.0f, 0.0f, 320.0f, 600.0f};
@@ -79,15 +80,19 @@ int main(/*int argc, char *argv[]*/){ /* programa principal */
     for (size_t i = 0; i < MenuOperaciones.size(); i++)
         botonesMenuOperaciones.push_back({ 20.0f, (float)(80 + 60*i), 280.0f, 40.0f });
 
+    OperacMatrices misMatrices = OperacMatrices();
+
+    //--------------------------------------------------------------------------------------
+
     // Main window loop
     while (!WindowShouldClose())
     {
         // Update
         //----------------------------------------------------------------------------------
-        // TODO: Actualizat variables aquí
+        // TODO: Actualizar variables aquí
+        OperacMatrices::openMenu ?
+            selecMouse(botonesMenuPrincipal, MenuPrincipal, mouseHoverRec) : selecMouse02(botonesMenuOperaciones, MenuOperaciones, mouseHoverRec);
         //----------------------------------------------------------------------------------
-        selecMouse(botonesMenuPrincipal, mouseHoverRec);
-
         // Draw/Dibujado de elementos en la ventana
         //----------------------------------------------------------------------------------
         BeginDrawing();
@@ -96,11 +101,12 @@ int main(/*int argc, char *argv[]*/){ /* programa principal */
 
         DrawRectangleRec(cuadradoOper, GRAY);
         DrawText("MENU:", 100, 30, 40, DARKBLUE);
-        menuPrincipal(botonesMenuPrincipal, mouseHoverRec);
-        //menuOperacMatrices(botonesMenuOperaciones, mouseHoverRec);
+        OperacMatrices::openMenu ?
+            menuPrincipal(botonesMenuPrincipal, mouseHoverRec) : menuOperacMatrices(botonesMenuOperaciones, mouseHoverRec);
 
+        //OperacMatrices::openMenu ?
+        //    opcionSelecMenuPrinc(&misMatrices, mouseHoverRec) : opcionSelecMenuOper(&misMatrices, mouseHoverRec);
         DrawText("Ejecutando una ventana de Raylib", 340, 100, 20, BLACK);
-
         EndDrawing();
         //----------------------------------------------------------------------------------
     }
@@ -217,10 +223,10 @@ void menuPrincipal(vector<Rectangle>& botonesMenuPrincipal, int& mouseHoverRec){
     }
 }
 
-void selecMouse(vector<Rectangle>& botonesMenuPrincipal, int& mouseHoverRec){
-        for (size_t i = 0; i < MenuPrincipal.size(); i++)
+void selecMouse(vector<Rectangle>& botones, vector<OperMenu>& menu, int& mouseHoverRec){
+        for (size_t i = 0; i < menu.size(); i++)
         {
-            if (CheckCollisionPointRec(GetMousePosition(), botonesMenuPrincipal[i]))
+            if (CheckCollisionPointRec(GetMousePosition(), botones[i]))
             {
                 mouseHoverRec = i;
 
@@ -230,7 +236,32 @@ void selecMouse(vector<Rectangle>& botonesMenuPrincipal, int& mouseHoverRec){
                     currentProcess = i;
                     textureReload = true;
                     */
-                    cout << "Seleciono menu: " << i << endl;
+                    cout << "Seleciono en menu 01 el index: " << i << endl;
+                    cout << "Seleciono en menu 01 el index: " << mouseHoverRec << endl;
+                    OperacMatrices::openMenu = false;
+                }
+                break;
+            }
+            else mouseHoverRec = -1;
+        }
+}
+
+void selecMouse02(vector<Rectangle>& botones, vector<OperMenu02>& menu, int& mouseHoverRec){
+    for (size_t i = 0; i < menu.size(); i++)
+        {
+            if (CheckCollisionPointRec(GetMousePosition(), botones[i]))
+            {
+                mouseHoverRec = i;
+
+                if (IsMouseButtonReleased(MOUSE_BUTTON_LEFT))
+                {
+                    /*
+                    currentProcess = i;
+                    textureReload = true;
+                    */
+                    cout << "Seleciono en menu 02 el index: " << i << endl;
+                    cout << "Seleciono en menu 02 el index: " << mouseHoverRec << endl;
+                    OperacMatrices::openMenu = true;
                 }
                 break;
             }

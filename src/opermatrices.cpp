@@ -1,7 +1,8 @@
 #include <iostream>
 // incluir librerias custom
-#include "matriz.hpp"
-#include "opermatrices.hpp"
+#include <matriz.hpp>
+#include <opermatrices.hpp>
+#include <config.hpp>
 // raylib
 #include <raylib.h>
 
@@ -12,6 +13,7 @@ using std::endl;
 /* implementación de los metodos de la clase  OperacMatrices */
 
 void OperacMatrices::deterMatriz(void){
+    DrawText("Test: calcular determinante de una matriz:", 340, 30, 20, DARKBLUE);
     /*
     string nombreMatriz;
     bool cancelar = false;
@@ -33,6 +35,7 @@ void OperacMatrices::deterMatriz(void){
 }
 
 void OperacMatrices::inversaMatriz(void){
+    DrawText("Test: calcular inversa de una matriz", 340, 30, 20, DARKBLUE);
     /*
     string nombreMatriz;
     bool cancelar = false;
@@ -62,6 +65,7 @@ void OperacMatrices::inversaMatriz(void){
 }
 
 void OperacMatrices::multiMatrices(void){
+    DrawText("Test: multiplicar matrices:", 340, 30, 20, DARKBLUE);
     /*
     string nombreMatriz[2];
     bool cancelar = false;
@@ -86,6 +90,7 @@ void OperacMatrices::multiMatrices(void){
 }
 
 void OperacMatrices::multiEscalarMatriz(void){
+    DrawText("Test: multiplicar matriz por un escalar:", 340, 30, 20, DARKBLUE);
     /*
     string nombreMatriz;
     bool cancelar = false;
@@ -107,6 +112,7 @@ void OperacMatrices::multiEscalarMatriz(void){
 }
 
 void OperacMatrices::restarMatrices(void){
+    DrawText("Test: restar matrices:", 340, 30, 20, DARKBLUE);
     /*
     string nombreMatriz[2];
     bool cancelar = false;
@@ -131,6 +137,7 @@ void OperacMatrices::restarMatrices(void){
 }
 
 void OperacMatrices::sumarMatrices(void){
+    DrawText("Test: sumar matrices:", 340, 30, 20, DARKBLUE);
     /*
     string nombreMatriz[2];
     bool cancelar = false;
@@ -223,6 +230,7 @@ bool OperacMatrices::noCumpleReqMulti(string& Matriz01, string& Matriz02){
 }
 
 void OperacMatrices::crearMatriz(){ // se omite la variable opcion en la compilacion del programa
+    DrawText("Test: Crear matriz:", 340, 30, 20, DARKBLUE);
     /*
     string nombre;
     int filas, columnas;
@@ -240,9 +248,11 @@ void OperacMatrices::crearMatriz(){ // se omite la variable opcion en la compila
 
 void OperacMatrices::mostrarMenuOpMatrices(){
     OperacMatrices::openMenu = false;
+    VariablesConfig::clickOpcion = -1;
 }
 
 void OperacMatrices::verMatrices(){
+    DrawText("Test: ver matrices:", 340, 30, 20, DARKBLUE);
     /*
     map<string, Matriz*>::iterator iterador;
     cout << "\n\nImprimiendo matrices almacenadas: \n" << endl;
@@ -264,7 +274,5 @@ void OperacMatrices::salirPrograma(){
         Matriz* valor = iterador->second;
         delete valor; // liberando memoria de cada matriz
     }
-
-    //delete misMatrices; // liberando memoria
-    //ejecutando = false;
+    CloseWindow();
 }

@@ -7,12 +7,13 @@
 // incluir librerias custom
 #include <matriz.hpp>
 #include <opermatrices.hpp>
+#include <config.hpp>
 
 using namespace std;
 
 /* varibles globales de configuracion */
-bool ejecutando = true; // variable global que mantiene vivo el programa
 bool OperacMatrices::openMenu = true; // true -> menu 01 , false -> menu 02
+int VariablesConfig::clickOpcion = -1;
 
 struct OperMenu{ /* estructura para controlar las opciones del menu principal */
     string opciones;
@@ -36,9 +37,9 @@ vector <OperMenu> MenuOperaciones = { // opciones del menu de operaciones
     { "Menu anterior",                  &OperacMatrices::mostrarMenuPrincipal } // cambiar variable global
 }; // empleamos los punteros a metodos de clase
 
-void selecMouse(vector<Rectangle>& botones, vector<OperMenu>& menu, int& mouseHoverRec, OperacMatrices* misMatrices);
+void selecMouse(vector<Rectangle>& botones, vector<OperMenu>& menu, int& mouseHoverRec);
 void dibujarMenus(vector<Rectangle>& botonesMenuPrincipal, vector<OperMenu>& menu, int& mouseHoverRec);
-void dibujarEventos(OperacMatrices* misMatrices, vector<OperMenu>& menu, int& mouseHoverRec);
+void dibujarEventos(OperacMatrices* misMatrices, vector<OperMenu>& menu);
 
 int main(/*int argc, char *argv[]*/){ /* programa principal */
     // Initialization
@@ -72,7 +73,9 @@ int main(/*int argc, char *argv[]*/){ /* programa principal */
         //----------------------------------------------------------------------------------
         // TODO: Actualizar variables aquí
         OperacMatrices::openMenu ?
-            selecMouse(botonesMenuPrincipal, MenuPrincipal, mouseHoverRec, &misMatrices) : selecMouse(botonesMenuOperaciones, MenuOperaciones, mouseHoverRec, &misMatrices);
+            selecMouse(botonesMenuPrincipal, MenuPrincipal, mouseHoverRec)
+            :
+            selecMouse(botonesMenuOperaciones, MenuOperaciones, mouseHoverRec);
         //----------------------------------------------------------------------------------
         // Draw/Dibujado de elementos en la ventana
         //----------------------------------------------------------------------------------
@@ -83,10 +86,14 @@ int main(/*int argc, char *argv[]*/){ /* programa principal */
         DrawRectangleRec(cuadradoOper, GRAY);
         DrawText("MENU:", 100, 30, 40, DARKBLUE);
         OperacMatrices::openMenu ?
-            dibujarMenus(botonesMenuPrincipal, MenuPrincipal, mouseHoverRec) : dibujarMenus(botonesMenuOperaciones, MenuOperaciones, mouseHoverRec);
+            dibujarMenus(botonesMenuPrincipal, MenuPrincipal, mouseHoverRec)
+            :
+            dibujarMenus(botonesMenuOperaciones, MenuOperaciones, mouseHoverRec);
 
-        //OperacMatrices::openMenu ?
-        //    dibujarEventos(&misMatrices, MenuPrincipal, mouseHoverRec) : dibujarEventos(&misMatrices, MenuOperaciones, mouseHoverRec);
+        OperacMatrices::openMenu ?
+            dibujarEventos(&misMatrices, MenuPrincipal)
+            :
+            dibujarEventos(&misMatrices, MenuOperaciones);
 
         DrawText("Ejecutando una ventana de Raylib", 340, 100, 20, BLACK);
         EndDrawing();
@@ -108,18 +115,21 @@ void dibujarMenus(vector<Rectangle>& botones, vector<OperMenu>& menu, int& mouse
     }
 }
 
-void dibujarEventos(OperacMatrices* misMatrices, vector<OperMenu>& menu, int& mouseHoverRec){
-    (misMatrices->*menu[mouseHoverRec].method)();
+void dibujarEventos(OperacMatrices* misMatrices, vector<OperMenu>& menu){
+    if(VariablesConfig::clickOpcion != -1 && (size_t)VariablesConfig::clickOpcion < menu.size()){
+        (misMatrices->*menu[VariablesConfig::clickOpcion].method)();
+        //DrawText("test 02:", 340, 120, 40, DARKBLUE);
+    }
 }
 
-void selecMouse(vector<Rectangle>& botones, vector<OperMenu>& menu, int& mouseHoverRec, OperacMatrices* misMatrices){
+void selecMouse(vector<Rectangle>& botones, vector<OperMenu>& menu, int& mouseHoverRec){
         for (size_t i = 0; i < menu.size(); i++){
             if (CheckCollisionPointRec(GetMousePosition(), botones[i])){
                 mouseHoverRec = i;
 
                 if (IsMouseButtonReleased(MOUSE_BUTTON_LEFT)){
                     cout << "Seleciono en menu el index: " << mouseHoverRec << endl;
-                    (misMatrices->*menu[i].method)();
+                    VariablesConfig::clickOpcion = i;
                 }
                 break;
             }

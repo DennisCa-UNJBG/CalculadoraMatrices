@@ -14,48 +14,31 @@ using namespace std;
 bool ejecutando = true; // variable global que mantiene vivo el programa
 bool OperacMatrices::openMenu = true; // true -> menu 01 , false -> menu 02
 
-/* opciones del menu principal */
-void menuPrincipal(vector<Rectangle>& botonesMenuPrincipal, int& mouseHoverRec);
-void menuOperacMatrices(vector<Rectangle>& botonesMenuOperaciones, int& mouseHoverRec);
-void opcionSelecMenuPrinc(OperacMatrices* misMatrices, int opcion);
-void crearMatriz(OperacMatrices* misMatrices, int opcion);
-void abrirMenuOpMatrices(OperacMatrices* misMatrices, int opcion);
-void verMatrices(OperacMatrices* misMatrices, int opcion);
-void salirPrograma(OperacMatrices* misMatrices, int opcion);
-
-/* opciones del menu secundario(operaciones) */
-void opcionSelecMenuOper(OperacMatrices* misMatrices, int opcion);
-
 struct OperMenu{ /* estructura para controlar las opciones del menu principal */
-    string opciones;
-    void (*func) (OperacMatrices* misMatrices, int opcion);
-};
-
-vector<OperMenu> MenuPrincipal = { // opciones del menu principal
-    { "Crear nueva matriz",          crearMatriz },
-    { "Operaciones con matrices",    abrirMenuOpMatrices },
-    { "Ver matrices existentes",     verMatrices },
-    { "Salir",                       salirPrograma }
-}; // empleamos los punteros a funciones
-
-struct OperMenu02{  /* estructura para controlar las opciones del menu de operaciones */
     string opciones;
     void (OperacMatrices::*method) (void);
 };
 
-vector <OperMenu02> MenuOperaciones = { // opciones del menu de operaciones
+vector<OperMenu> MenuPrincipal = { // opciones del menu principal
+    { "Crear nueva matriz",          &OperacMatrices::crearMatriz },
+    { "Operaciones con matrices",    &OperacMatrices::mostrarMenuOpMatrices },
+    { "Ver matrices existentes",     &OperacMatrices::verMatrices },
+    { "Salir",                       &OperacMatrices::salirPrograma }
+}; // empleamos los punteros a metodos de clase
+
+vector <OperMenu> MenuOperaciones = { // opciones del menu de operaciones
     { "Calcular la inversa",            &OperacMatrices::inversaMatriz }, // 1 matriz X
     { "Calcular la determinante",       &OperacMatrices::deterMatriz }, // 1 matriz X
     { "Sumar matrices",                 &OperacMatrices::sumarMatrices }, // 2 matrices
     { "Restar matrices",                &OperacMatrices::restarMatrices }, // 2 matrices
     { "Multiplicar matrices",           &OperacMatrices::multiMatrices }, // 2 matrices
     { "Multiplicar por escalar",        &OperacMatrices::multiEscalarMatriz }, // 1 matriz X y 1 entero
-    { "Menu anterior",                  &OperacMatrices::salirMenuOper } // cambiar variable global
+    { "Menu anterior",                  &OperacMatrices::mostrarMenuPrincipal } // cambiar variable global
 }; // empleamos los punteros a metodos de clase
 
-/* raylib */
-void selecMouse(vector<Rectangle>& botones, vector<OperMenu>& menu, int& mouseHoverRec);
-void selecMouse02(vector<Rectangle>& botones, vector<OperMenu02>& menu, int& mouseHoverRec);
+void selecMouse(vector<Rectangle>& botones, vector<OperMenu>& menu, int& mouseHoverRec, OperacMatrices* misMatrices);
+void dibujarMenus(vector<Rectangle>& botonesMenuPrincipal, vector<OperMenu>& menu, int& mouseHoverRec);
+void dibujarEventos(OperacMatrices* misMatrices, vector<OperMenu>& menu, int& mouseHoverRec);
 
 int main(/*int argc, char *argv[]*/){ /* programa principal */
     // Initialization
@@ -68,8 +51,9 @@ int main(/*int argc, char *argv[]*/){ /* programa principal */
 
     SetTargetFPS(60);               // limite en los FPS por segundo  ¡NO BORRAR!
 
-    // sector de operaciones
+    // dibujar sector de operaciones
     Rectangle cuadradoOper = Rectangle{0.0f, 0.0f, 320.0f, 600.0f};
+
     // crear botones menu principal
     vector<Rectangle> botonesMenuPrincipal;
     for (size_t i = 0; i < MenuPrincipal.size(); i++)
@@ -81,17 +65,14 @@ int main(/*int argc, char *argv[]*/){ /* programa principal */
         botonesMenuOperaciones.push_back({ 20.0f, (float)(80 + 60*i), 280.0f, 40.0f });
 
     OperacMatrices misMatrices = OperacMatrices();
-
     //--------------------------------------------------------------------------------------
-
     // Main window loop
-    while (!WindowShouldClose())
-    {
+    while (!WindowShouldClose()){
         // Update
         //----------------------------------------------------------------------------------
         // TODO: Actualizar variables aquí
         OperacMatrices::openMenu ?
-            selecMouse(botonesMenuPrincipal, MenuPrincipal, mouseHoverRec) : selecMouse02(botonesMenuOperaciones, MenuOperaciones, mouseHoverRec);
+            selecMouse(botonesMenuPrincipal, MenuPrincipal, mouseHoverRec, &misMatrices) : selecMouse(botonesMenuOperaciones, MenuOperaciones, mouseHoverRec, &misMatrices);
         //----------------------------------------------------------------------------------
         // Draw/Dibujado de elementos en la ventana
         //----------------------------------------------------------------------------------
@@ -102,10 +83,11 @@ int main(/*int argc, char *argv[]*/){ /* programa principal */
         DrawRectangleRec(cuadradoOper, GRAY);
         DrawText("MENU:", 100, 30, 40, DARKBLUE);
         OperacMatrices::openMenu ?
-            menuPrincipal(botonesMenuPrincipal, mouseHoverRec) : menuOperacMatrices(botonesMenuOperaciones, mouseHoverRec);
+            dibujarMenus(botonesMenuPrincipal, MenuPrincipal, mouseHoverRec) : dibujarMenus(botonesMenuOperaciones, MenuOperaciones, mouseHoverRec);
 
         //OperacMatrices::openMenu ?
-        //    opcionSelecMenuPrinc(&misMatrices, mouseHoverRec) : opcionSelecMenuOper(&misMatrices, mouseHoverRec);
+        //    dibujarEventos(&misMatrices, MenuPrincipal, mouseHoverRec) : dibujarEventos(&misMatrices, MenuOperaciones, mouseHoverRec);
+
         DrawText("Ejecutando una ventana de Raylib", 340, 100, 20, BLACK);
         EndDrawing();
         //----------------------------------------------------------------------------------
@@ -115,153 +97,29 @@ int main(/*int argc, char *argv[]*/){ /* programa principal */
     //--------------------------------------------------------------------------------------
     CloseWindow();        // Close window and OpenGL context
     //--------------------------------------------------------------------------------------
-    /*
-    OperacMatrices misMatrices = OperacMatrices();
-    while(ejecutando){
-        system("cls");
-
-        string sOpcion;
-        int iOpcion;
-        OperacMatrices::openMenu ? menuPrincipal() : menuOperacMatrices();
-
-        cout << "\nSelecciona una opcion del menu: ";
-        cin.sync(); getline(cin,sOpcion);
-
-        //convertir lo que se ingrese a entero omitiendo letras y signos
-        stringstream ss;
-        ss << sOpcion;
-        ss >> iOpcion;
-
-        OperacMatrices::openMenu ? opcionSelecMenuPrinc(&misMatrices, iOpcion) : opcionSelecMenuOper(&misMatrices, iOpcion);
-    }
-    */
     return 0;
 }
 
-/* implementación de las funciones relacionadas al menu 02 */
-void opcionSelecMenuOper(OperacMatrices* misMatrices, int opcion){
-    if((size_t)opcion > MenuOperaciones.size() || opcion <= 0)
-        cout << "ERROR: Valor ingresado no valido" << endl;
-    else
-        (misMatrices->*MenuOperaciones[opcion-1].method)();
-
-    // no lanzar el pause si se elige la ultima opcion
-    if((size_t)opcion != MenuOperaciones.size())
-        system("pause");
-}
-
-/* implementación de las funciones relacionadas al menu 01 */
-void salirPrograma(OperacMatrices* misMatrices, int /*opcion*/){
-    map<string, Matriz*>::iterator iterador;
-    for (iterador = misMatrices->matrices.begin(); iterador != misMatrices->matrices.end(); iterador++){
-        Matriz* valor = iterador->second;
-        delete valor; // liberando memoria de cada matriz
-    }
-
-    delete misMatrices; // liberando memoria
-    ejecutando = false;
-}
-
-void verMatrices(OperacMatrices* misMatrices, int /*opcion*/){
-    map<string, Matriz*>::iterator iterador;
-    cout << "\n\nImprimiendo matrices almacenadas: \n" << endl;
-    for (iterador = misMatrices->matrices.begin(); iterador != misMatrices->matrices.end(); iterador++){
-        // "first" tiene la clave. "second" el valor
-        string clave = iterador->first;
-        Matriz* valor = iterador->second;
-        // usamos las variables Clave/Valor para mostrar resultados en pantalla
-        cout << "La matriz : " << clave
-            << "\nTiene los  valores:" << endl;
-        valor->imprimirMatriz();
+void dibujarMenus(vector<Rectangle>& botones, vector<OperMenu>& menu, int& mouseHoverRec){
+    for (size_t i = 0; i < menu.size(); i++){
+        DrawRectangleRec(botones[i], ((int)i == mouseHoverRec) ? SKYBLUE : LIGHTGRAY);
+        DrawRectangleLines((int)botones[i].x, (int)botones[i].y, (int)botones[i].width, (int)botones[i].height, BLUE);
+        DrawText( menu[i].opciones.c_str(), (int)( botones[i].x + botones[i].width/2 - MeasureText(menu[i].opciones.c_str(), 20)/2), (int) botones[i].y + 11, 20, DARKBLUE);
     }
 }
 
-void abrirMenuOpMatrices(OperacMatrices* /*misMatrices*/, int /*opcion*/){
-    OperacMatrices::openMenu = false;
-    system("cls");
-    //menuOperacMatrices();
+void dibujarEventos(OperacMatrices* misMatrices, vector<OperMenu>& menu, int& mouseHoverRec){
+    (misMatrices->*menu[mouseHoverRec].method)();
 }
 
-void crearMatriz(OperacMatrices* misMatrices, int /*opcion*/){ // se omite la variable opcion en la compilacion del programa
-    string nombre;
-    int filas, columnas;
-    cout << "Ingrese un nombre(sin espacios) para la matriz:" << endl;
-    cin.sync(); getline(cin,nombre);
-
-    cout << "Ingrese la cantidad de la filas de la matriz: " << endl;
-    cin >> filas;
-    cout << "Ingrese la cantidad de la columnas de la matriz: " << endl;
-    cin >> columnas;
-
-    misMatrices->agregarMatriz(filas, columnas, nombre) ;
-}
-
-void opcionSelecMenuPrinc(OperacMatrices* misMatrices, int opcion){
-    if((size_t)opcion > MenuPrincipal.size() || opcion <= 0)
-        cout << "ERROR: Valor ingresado no valido" << endl;
-    else
-        MenuPrincipal[opcion-1].func(misMatrices, 0);
-
-    // no lanzar el pause si se elige el menu 02 por 1º vez
-    if(OperacMatrices::openMenu != false)
-        system("pause");
-}
-
-void menuOperacMatrices(vector<Rectangle>& botonesMenuOperaciones, int& mouseHoverRec){
-    for (size_t i = 0; i < MenuOperaciones.size(); i++){
-        DrawRectangleRec(botonesMenuOperaciones[i], ((int)i == mouseHoverRec) ? SKYBLUE : LIGHTGRAY);
-        DrawRectangleLines((int)botonesMenuOperaciones[i].x, (int)botonesMenuOperaciones[i].y, (int)botonesMenuOperaciones[i].width, (int)botonesMenuOperaciones[i].height, BLUE);
-        DrawText( MenuOperaciones[i].opciones.c_str(), (int)( botonesMenuOperaciones[i].x + botonesMenuOperaciones[i].width/2 - MeasureText(MenuOperaciones[i].opciones.c_str(), 20)/2), (int) botonesMenuOperaciones[i].y + 11, 20, DARKBLUE);
-    }
-}
-
-void menuPrincipal(vector<Rectangle>& botonesMenuPrincipal, int& mouseHoverRec){
-    for (size_t i = 0; i < MenuPrincipal.size(); i++){
-        DrawRectangleRec(botonesMenuPrincipal[i], ((int)i == mouseHoverRec) ? SKYBLUE : LIGHTGRAY);
-        DrawRectangleLines((int)botonesMenuPrincipal[i].x, (int)botonesMenuPrincipal[i].y, (int)botonesMenuPrincipal[i].width, (int)botonesMenuPrincipal[i].height, BLUE);
-        DrawText( MenuPrincipal[i].opciones.c_str(), (int)( botonesMenuPrincipal[i].x + botonesMenuPrincipal[i].width/2 - MeasureText(MenuPrincipal[i].opciones.c_str(), 20)/2), (int) botonesMenuPrincipal[i].y + 11, 20, DARKBLUE);
-    }
-}
-
-void selecMouse(vector<Rectangle>& botones, vector<OperMenu>& menu, int& mouseHoverRec){
-        for (size_t i = 0; i < menu.size(); i++)
-        {
-            if (CheckCollisionPointRec(GetMousePosition(), botones[i]))
-            {
+void selecMouse(vector<Rectangle>& botones, vector<OperMenu>& menu, int& mouseHoverRec, OperacMatrices* misMatrices){
+        for (size_t i = 0; i < menu.size(); i++){
+            if (CheckCollisionPointRec(GetMousePosition(), botones[i])){
                 mouseHoverRec = i;
 
-                if (IsMouseButtonReleased(MOUSE_BUTTON_LEFT))
-                {
-                    /*
-                    currentProcess = i;
-                    textureReload = true;
-                    */
-                    cout << "Seleciono en menu 01 el index: " << i << endl;
-                    cout << "Seleciono en menu 01 el index: " << mouseHoverRec << endl;
-                    OperacMatrices::openMenu = false;
-                }
-                break;
-            }
-            else mouseHoverRec = -1;
-        }
-}
-
-void selecMouse02(vector<Rectangle>& botones, vector<OperMenu02>& menu, int& mouseHoverRec){
-    for (size_t i = 0; i < menu.size(); i++)
-        {
-            if (CheckCollisionPointRec(GetMousePosition(), botones[i]))
-            {
-                mouseHoverRec = i;
-
-                if (IsMouseButtonReleased(MOUSE_BUTTON_LEFT))
-                {
-                    /*
-                    currentProcess = i;
-                    textureReload = true;
-                    */
-                    cout << "Seleciono en menu 02 el index: " << i << endl;
-                    cout << "Seleciono en menu 02 el index: " << mouseHoverRec << endl;
-                    OperacMatrices::openMenu = true;
+                if (IsMouseButtonReleased(MOUSE_BUTTON_LEFT)){
+                    cout << "Seleciono en menu el index: " << mouseHoverRec << endl;
+                    (misMatrices->*menu[i].method)();
                 }
                 break;
             }

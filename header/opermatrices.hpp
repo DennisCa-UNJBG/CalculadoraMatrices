@@ -12,20 +12,25 @@ using std::string;
 class OperacMatrices{ /* clase global de operaciones */
 public:
     map<string, Matriz*>matrices; // estructura clave/valor (contiene todas las matrices)
-    void agregarMatriz(int& filas, int& columnas, string&nombre);
-    void buscarMatriz(bool& cancelar, int cantMatriz, string& nombre /* retorna el nombre de la matriz*/);
-    bool noCumpleReqSumRest(string& Matriz01, string& Matriz02);
-    bool noCumpleReqMulti(string& Matriz01, string& Matriz02);
-    //operaciones disponibles
+    static bool openMenu;
+    //operaciones disponibles menu 01
+    void crearMatriz();
+    void mostrarMenuOpMatrices();
+    void verMatrices();
+    void salirPrograma();
+    //operaciones disponibles menu 02
     void deterMatriz(void);
     void inversaMatriz(void);
     void sumarMatrices(void);
     void restarMatrices(void);
     void multiMatrices(void );
     void multiEscalarMatriz(void);
-    void salirMenuOper(void);
-    static bool openMenu;
+    void mostrarMenuPrincipal(void);
 private:
+    void agregarMatriz(int& filas, int& columnas, string&nombre);
+    void buscarMatriz(bool& cancelar, int cantMatriz, string& nombre /* retorna el nombre de la matriz*/);
+    bool noCumpleReqSumRest(string& Matriz01, string& Matriz02);
+    bool noCumpleReqMulti(string& Matriz01, string& Matriz02);
 protected:
 };
 

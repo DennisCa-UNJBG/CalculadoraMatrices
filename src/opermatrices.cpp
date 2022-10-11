@@ -2,6 +2,8 @@
 // incluir librerias custom
 #include "matriz.hpp"
 #include "opermatrices.hpp"
+// raylib
+#include <raylib.h>
 
 using std::cout;
 using std::cin;
@@ -10,6 +12,7 @@ using std::endl;
 /* implementación de los metodos de la clase  OperacMatrices */
 
 void OperacMatrices::deterMatriz(void){
+    /*
     string nombreMatriz;
     bool cancelar = false;
     // buscar la matriz que se necesita para la operacion
@@ -26,9 +29,11 @@ void OperacMatrices::deterMatriz(void){
     cout << "La determinante de la matriz '" << nombreMatriz << "' es: "
         << this->matrices[nombreMatriz]->calcularDeterminante()
         << endl;
+    */
 }
 
 void OperacMatrices::inversaMatriz(void){
+    /*
     string nombreMatriz;
     bool cancelar = false;
     // buscar la matriz que se necesita para la operacion
@@ -53,9 +58,11 @@ void OperacMatrices::inversaMatriz(void){
     matriz->imprimirMatriz(7);
     cout << "La determinante es: " << det << endl;
     delete matriz; // liberar memoria
+    */
 }
 
 void OperacMatrices::multiMatrices(void){
+    /*
     string nombreMatriz[2];
     bool cancelar = false;
     int i = 0;
@@ -75,9 +82,11 @@ void OperacMatrices::multiMatrices(void){
     cout << "\nLa multiplicacion de las matrices ( " << nombreMatriz[0] << " * " << nombreMatriz[1] << " ) es:" << endl;
     temp->imprimirMatriz();
     delete temp; // liberar memoria
+    */
 }
 
 void OperacMatrices::multiEscalarMatriz(void){
+    /*
     string nombreMatriz;
     bool cancelar = false;
     // buscar la matriz que se necesita para la operacion
@@ -94,9 +103,11 @@ void OperacMatrices::multiEscalarMatriz(void){
     cout << "\nLa multiplicacion de la matriz ( " << nombreMatriz << " * " << numero << " ) es:" << endl;
     temp->imprimirMatriz(7);
     delete temp; // liberar memoria
+    */
 }
 
 void OperacMatrices::restarMatrices(void){
+    /*
     string nombreMatriz[2];
     bool cancelar = false;
     int i = 0;
@@ -116,9 +127,11 @@ void OperacMatrices::restarMatrices(void){
     cout << "\nLa resta de las matrices ( " << nombreMatriz[0] << " - " << nombreMatriz[1] << " ) es:" << endl;
     temp->imprimirMatriz();
     delete temp;  // liberar memoria
+    */
 }
 
 void OperacMatrices::sumarMatrices(void){
+    /*
     string nombreMatriz[2];
     bool cancelar = false;
     int i = 0;
@@ -138,9 +151,10 @@ void OperacMatrices::sumarMatrices(void){
     cout << "\nLa suma de las matrices ( " << nombreMatriz[0] << " + " << nombreMatriz[1] << " ) es:" << endl;
     temp->imprimirMatriz();
     delete temp;  // liberar memoria
+    */
 }
 
-void OperacMatrices::salirMenuOper(void){
+void OperacMatrices::mostrarMenuPrincipal(void){
     OperacMatrices::openMenu = true;
 }
 
@@ -206,4 +220,51 @@ bool OperacMatrices::noCumpleReqMulti(string& Matriz01, string& Matriz02){
         }
     }
     return false; // cumple todos los requisitos
+}
+
+void OperacMatrices::crearMatriz(){ // se omite la variable opcion en la compilacion del programa
+    /*
+    string nombre;
+    int filas, columnas;
+    cout << "Ingrese un nombre(sin espacios) para la matriz:" << endl;
+    cin.sync(); getline(cin,nombre);
+
+    cout << "Ingrese la cantidad de la filas de la matriz: " << endl;
+    cin >> filas;
+    cout << "Ingrese la cantidad de la columnas de la matriz: " << endl;
+    cin >> columnas;
+
+    this->agregarMatriz(filas, columnas, nombre) ;
+    */
+}
+
+void OperacMatrices::mostrarMenuOpMatrices(){
+    OperacMatrices::openMenu = false;
+}
+
+void OperacMatrices::verMatrices(){
+    /*
+    map<string, Matriz*>::iterator iterador;
+    cout << "\n\nImprimiendo matrices almacenadas: \n" << endl;
+    for (iterador = this->matrices.begin(); iterador != this->matrices.end(); iterador++){
+        // "first" tiene la clave. "second" el valor
+        string clave = iterador->first;
+        Matriz* valor = iterador->second;
+        // usamos las variables Clave/Valor para mostrar resultados en pantalla
+        cout << "La matriz : " << clave
+            << "\nTiene los  valores:" << endl;
+        valor->imprimirMatriz();
+    }
+    */
+}
+
+void OperacMatrices::salirPrograma(){
+    map<string, Matriz*>::iterator iterador;
+    for (iterador = this->matrices.begin(); iterador != this->matrices.end(); iterador++){
+        Matriz* valor = iterador->second;
+        delete valor; // liberando memoria de cada matriz
+    }
+
+    //delete misMatrices; // liberando memoria
+    //ejecutando = false;
 }

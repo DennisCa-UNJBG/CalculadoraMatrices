@@ -166,8 +166,71 @@ void OperacMatrices::restarMatrices(void){
     */
 }
 
+// calcular suma de matrices
+string VariablesConfig::nameSumaBuscar01 = "";
+string VariablesConfig::nameSumaBuscar02 = "";
+string VariablesConfig::nameSuma01 = "";
+string VariablesConfig::nameSuma02 = "";
+bool VariablesConfig::mouseOverSuma = false;
+bool VariablesConfig::cancelSuma = false;
+bool VariablesConfig::clickSuma = false;
+
 void OperacMatrices::sumarMatrices(void){
-    DrawText("Test: sumar matrices:", 340, 30, 20, DARKBLUE);
+    //DrawText("Test: sumar matrices:", 340, 30, 20, DARKBLUE);
+    int x = 440;
+    int y = 100;
+    Rectangle botonesSumarMatriz[3] ={{(float)(x+240), (float)(y+80), 80.0f, 20.0f}, {(float)(x+240), (float)(y+110), 80.0f, 20.0f},
+                                        {(float)(x+330), (float)(y+90), 90.0f, 20.0f}};
+
+    DrawText("CALCULAR DETERMINANTE", x, y, 30, DARKBLUE);
+    DrawText("    DE UNA MATRIZ    ", x, y+30, 30, DARKBLUE);
+    DrawText("Nombre de la matriz 01:", x, y+80, 20, BLACK);
+    DrawText("Nombre de la matriz 02:", x, y+110, 20, BLACK);
+    input_box(botonesSumarMatriz[0], SKYBLUE, VariablesConfig::nameSumaBuscar01);
+    input_box(botonesSumarMatriz[1], SKYBLUE, VariablesConfig::nameSumaBuscar02);
+
+    // boton buscar
+    DrawRectangleRec(botonesSumarMatriz[2], (VariablesConfig::mouseOverSuma) ? LIME : BLUE);
+    DrawText("Buscar", botonesSumarMatriz[2].x+10, botonesSumarMatriz[2].y, 20, DARKBLUE);
+    if (CheckCollisionPointRec(GetMousePosition(), botonesSumarMatriz[2])){
+        if (IsMouseButtonReleased(MOUSE_BUTTON_LEFT)){
+            cout << "clic agregar-> nombres: " << VariablesConfig::nameSumaBuscar01 << "-"  << VariablesConfig::nameSumaBuscar02 << endl;
+            VariablesConfig::nameSuma01 = VariablesConfig::nameSumaBuscar01;
+            VariablesConfig::nameSuma02 = VariablesConfig::nameSumaBuscar02;
+            VariablesConfig::clickSuma = true;
+            VariablesConfig::nameSumaBuscar01 = "";
+            VariablesConfig::nameSumaBuscar02 = "";
+        }
+        VariablesConfig::mouseOverSuma = true;
+    } else {
+        VariablesConfig::mouseOverSuma = false;
+    }
+    // fin boton buscar
+
+    if(VariablesConfig::clickSuma){
+        ostringstream message; // almacena todos los caracteres para imprimir luego
+        if(!this->buscarMatriz(VariablesConfig::nameSuma01)){
+            message << "La matriz ''" << VariablesConfig::nameSuma01 << "'' no existe";
+            DrawText((message.str()).c_str(), x-60, 260, 20, DARKBLUE);
+            return;
+        }
+
+        if(!this->buscarMatriz(VariablesConfig::nameSuma02)){
+            message << "La matriz ''" << VariablesConfig::nameSuma02 << "'' no existe";
+            DrawText((message.str()).c_str(), x-60, 260, 20, DARKBLUE);
+            return;
+        }
+
+        if(this->noCumpleReqSumRest(VariablesConfig::nameSuma01, VariablesConfig::nameSuma02))
+            return;
+
+
+        Matriz temp = *(*(this->matrices[VariablesConfig::nameSuma01]) + *(this->matrices[VariablesConfig::nameSuma02]));
+        message << "\nLa suma de las matrices ( " << VariablesConfig::nameSuma01 << " + " << VariablesConfig::nameSuma01<< " ) es:";
+        //cout << message.str() << endl;
+        DrawText((message.str()).c_str(), x-60, 230, 20, DARKBLUE);
+        temp.imprimirMatriz();
+    }
     /*
     string nombreMatriz[2];
     bool cancelar = false;
@@ -214,12 +277,14 @@ bool OperacMatrices::buscarMatriz(string& nombre){
 bool OperacMatrices::noCumpleReqSumRest(string& Matriz01, string& Matriz02){
     if((this->matrices[Matriz01]->getIsCuadrado() && this->matrices[Matriz02]->getIsCuadrado())){
         if(this->matrices[Matriz01]->getOrden() != this->matrices[Matriz02]->getOrden()){
-        cout << "No se puede operar, las matrices son de dimensiones distintas..." << endl;
-        return true; // no cumple todos los requisitos de matrices NxN
+            DrawText("No se puede operar, las matrices son de dimensiones distintas...", 380, 260, 20, DARKBLUE);
+            cout << "No se puede operar, las matrices son de dimensiones distintas..." << endl;
+            return true; // no cumple todos los requisitos de matrices NxN
         }
     } else {
         if(this->matrices[Matriz01]->getFilas() != this->matrices[Matriz02]->getFilas() ||
             this->matrices[Matriz01]->getColumnas() != this->matrices[Matriz02]->getColumnas()){
+            DrawText("No se puede operar, las matrices no coinciden en sus dimensiones...", 380, 260, 20, DARKBLUE);
             cout << "No se puede operar, las matrices no coinciden en sus dimensiones..." << endl;
             return true; // nocumple todos los requisitos de matrices NxM
         }

@@ -26,8 +26,15 @@ public:
     static bool mouseOverDeter;
     static bool CancelDeter;
     static bool clickDeter;
+    // sumar matrices
+    static string nameSumaBuscar01;
+    static string nameSumaBuscar02;
+    static string nameSuma01;
+    static string nameSuma02;
+    static bool mouseOverSuma;
+    static bool cancelSuma;
+    static bool clickSuma;
 private:
-    void test();
 protected:
 };
 #endif

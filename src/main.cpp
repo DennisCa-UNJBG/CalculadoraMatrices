@@ -11,8 +11,8 @@
 
 using namespace std;
 
-/* varibles globales de configuracion */
-bool OperacMatrices::openMenu = true; // true -> menu 01 , false -> menu 02
+// menus
+bool VariablesConfig::openMenu = true; // true -> menu 01 , false -> menu 02
 int VariablesConfig::clickMenu = -1;
 
 struct OperMenu{ /* estructura para controlar las opciones del menu principal */
@@ -72,7 +72,7 @@ int main(/*int argc, char *argv[]*/){ /* programa principal */
         // Update
         //----------------------------------------------------------------------------------
         // TODO: Actualizar variables aquí
-        OperacMatrices::openMenu ?
+        VariablesConfig::openMenu ?
             selecMouse(botonesMenuPrincipal, MenuPrincipal, mouseHoverRec)
             :
             selecMouse(botonesMenuOperaciones, MenuOperaciones, mouseHoverRec);
@@ -85,12 +85,12 @@ int main(/*int argc, char *argv[]*/){ /* programa principal */
 
         DrawRectangleRec(cuadradoOper, GRAY);
         DrawText("MENU:", 100, 30, 40, DARKBLUE);
-        OperacMatrices::openMenu ?
+        VariablesConfig::openMenu ?
             dibujarMenus(botonesMenuPrincipal, MenuPrincipal, mouseHoverRec)
             :
             dibujarMenus(botonesMenuOperaciones, MenuOperaciones, mouseHoverRec);
 
-        OperacMatrices::openMenu ?
+        VariablesConfig::openMenu ?
             dibujarEventos(&misMatrices, MenuPrincipal)
             :
             dibujarEventos(&misMatrices, MenuOperaciones);
@@ -117,8 +117,8 @@ void dibujarMenus(vector<Rectangle>& botones, vector<OperMenu>& menu, int& mouse
 
 void dibujarEventos(OperacMatrices* misMatrices, vector<OperMenu>& menu){
     if(VariablesConfig::clickMenu != -1 && (size_t)VariablesConfig::clickMenu < menu.size()){
+        // ejecutar el metodo indicado
         (misMatrices->*menu[VariablesConfig::clickMenu].method)();
-        //DrawText("test 02:", 340, 120, 40, DARKBLUE);
     }
 }
 

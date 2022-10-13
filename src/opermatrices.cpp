@@ -1,4 +1,5 @@
 #include <iostream>
+#include <sstream> // contatenar variables en una sola
 // incluir librerias custom
 #include <matriz.hpp>
 #include <opermatrices.hpp>
@@ -8,31 +9,59 @@
 
 using std::cout;
 using std::cin;
+using std::ostringstream;
 using std::stoi;
 using std::endl;
 
-/* implementación de los metodos de la clase  OperacMatrices */
+// calcular determinante
+string VariablesConfig::nameMatrizBuscar = "";
+string VariablesConfig::nameMatriz = "";
+bool VariablesConfig::mouseOverDeter = false;
+bool VariablesConfig::CancelDeter = false;
+bool VariablesConfig::clickDeter = false;
 
 void OperacMatrices::deterMatriz(void){
-    DrawText("Test: calcular determinante de una matriz:", 340, 30, 20, DARKBLUE);
-    /*
-    string nombreMatriz;
-    bool cancelar = false;
-    // buscar la matriz que se necesita para la operacion
-    this->buscarMatriz(cancelar, 1, nombreMatriz);
+    int x = 440;
+    int y = 100;
+    Rectangle botonesDeterMatriz[2] ={{(float)(x+220), (float)(y+80), 80.0f, 20.0f}, {(float)(x+310), (float)(y+80), 90.0f, 20.0f}};
 
-    if(cancelar)
-        return;
+    DrawText("CALCULAR DETERMINANTE", x, y, 30, DARKBLUE);
+    DrawText("    DE UNA MATRIZ    ", x, y+30, 30, DARKBLUE);
+    DrawText("Nombre de la matriz:", x, y+80, 20, BLACK);
+    input_box(botonesDeterMatriz[0], SKYBLUE, VariablesConfig::nameMatrizBuscar);
 
-    if(!this->matrices[nombreMatriz]->getIsCuadrado()){
-        cout <<  "La matriz '" << nombreMatriz << "' no tiene determinante, no es cuadrada... " << endl;
-        return;
+    // boton buscar
+    DrawRectangleRec(botonesDeterMatriz[1], (VariablesConfig::mouseOverDeter) ? LIME : BLUE);
+    DrawText("Buscar", botonesDeterMatriz[1].x+10, botonesDeterMatriz[1].y, 20, DARKBLUE);
+    if (CheckCollisionPointRec(GetMousePosition(), botonesDeterMatriz[1])){
+        if (IsMouseButtonReleased(MOUSE_BUTTON_LEFT)){
+            cout << "clic agregar-> nombre - " << VariablesConfig::nameMatrizBuscar << endl;
+            VariablesConfig::nameMatriz = VariablesConfig::nameMatrizBuscar;
+            VariablesConfig::clickDeter = true;
+            VariablesConfig::nameMatrizBuscar = "";
+        }
+        VariablesConfig::mouseOverDeter = true;
+    } else {
+        VariablesConfig::mouseOverDeter = false;
     }
+    // fin boton buscar
 
-    cout << "La determinante de la matriz '" << nombreMatriz << "' es: "
-        << this->matrices[nombreMatriz]->calcularDeterminante()
-        << endl;
-    */
+    if(VariablesConfig::clickDeter){
+        if(this->buscarMatriz(VariablesConfig::nameMatriz)){
+            ostringstream message; // almacena todos los caracteres para imprimir luego
+            if(!this->matrices[VariablesConfig::nameMatriz]->getIsCuadrado()){
+                message << "La matriz '" << VariablesConfig::nameMatriz << "' no tiene determinante, no es cuadrada... ";
+                DrawText((message.str()).c_str(), x-60, 260, 20, DARKBLUE);
+                return;
+            }
+            message << "La determinante de la matriz ''" << VariablesConfig::nameMatriz << "'' es: " << this->matrices[VariablesConfig::nameMatriz]->calcularDeterminante();
+            DrawText((message.str()).c_str(), x-60, 230, 20, DARKBLUE);
+            DrawText("Y sus valores son: ", x-60, 260, 20, DARKBLUE);
+            this->matrices[VariablesConfig::nameMatriz]->imprimirMatriz();
+        }else {
+            DrawText("La matriz indicada no existe", x-60, 260, 20, DARKBLUE);
+        }
+    }
 }
 
 void OperacMatrices::inversaMatriz(void){
@@ -163,7 +192,7 @@ void OperacMatrices::sumarMatrices(void){
 }
 
 void OperacMatrices::mostrarMenuPrincipal(void){
-    OperacMatrices::openMenu = true;
+    VariablesConfig::openMenu = true;
 }
 
 void OperacMatrices::agregarMatriz(int filas, int columnas, string&nombre){
@@ -175,27 +204,11 @@ void OperacMatrices::agregarMatriz(int filas, int columnas, string&nombre){
     matrices[nombre] = matriz;
 }
 
-void OperacMatrices::buscarMatriz(bool& cancelar, int cantMatriz, string& nombre){
-    bool matrizEncontrada = false;
-    int intentos = 2;
-    do{
-        cout << "\nIngrese el nombre de la matriz 0" << cantMatriz << ": " << endl;
-        cin.sync(); getline(cin,nombre);
-
-        if (this->matrices.count(nombre)){ // count() -> verifica si existe un item con X nombre
-            cout << "Sus elementos son:" << endl;
-            this->matrices[nombre]->imprimirMatriz();
-            matrizEncontrada = true;
-        } else {
-            cout << "La matriz '" << nombre <<"' no se encuentra...\n"
-                << "Le queda " << intentos << " intentos." << endl;
-
-            if(intentos == 0)
-                cancelar = true;
-
-            intentos--;
-        }
-    }while (intentos >= 0 && !matrizEncontrada);
+bool OperacMatrices::buscarMatriz(string& nombre){
+    if (this->matrices.count(nombre)) // count() -> verifica si existe un item con X nombre
+        return true;
+    else
+        return false;
 }
 
 bool OperacMatrices::noCumpleReqSumRest(string& Matriz01, string& Matriz02){
@@ -230,7 +243,7 @@ bool OperacMatrices::noCumpleReqMulti(string& Matriz01, string& Matriz02){
     return false; // cumple todos los requisitos
 }
 
-// variables para crear una matriz
+// crear matriz
 string VariablesConfig::name = "";
 string VariablesConfig::filas = "";
 string VariablesConfig::columnas = "";
@@ -279,7 +292,7 @@ void OperacMatrices::crearMatriz(){ // se omite la variable opcion en la compila
 }
 
 void OperacMatrices::mostrarMenuOpMatrices(){
-    OperacMatrices::openMenu = false;
+    VariablesConfig::openMenu = false;
     VariablesConfig::clickMenu = -1;
 }
 

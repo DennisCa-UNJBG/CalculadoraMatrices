@@ -13,7 +13,7 @@ using namespace std;
 
 /* varibles globales de configuracion */
 bool OperacMatrices::openMenu = true; // true -> menu 01 , false -> menu 02
-int VariablesConfig::clickOpcion = -1;
+int VariablesConfig::clickMenu = -1;
 
 struct OperMenu{ /* estructura para controlar las opciones del menu principal */
     string opciones;
@@ -95,7 +95,7 @@ int main(/*int argc, char *argv[]*/){ /* programa principal */
             :
             dibujarEventos(&misMatrices, MenuOperaciones);
 
-        DrawText("Ejecutando una ventana de Raylib", 340, 100, 20, BLACK);
+        //DrawText("Ejecutando una ventana de Raylib", 340, 100, 20, BLACK);
         EndDrawing();
         //----------------------------------------------------------------------------------
     }
@@ -116,8 +116,8 @@ void dibujarMenus(vector<Rectangle>& botones, vector<OperMenu>& menu, int& mouse
 }
 
 void dibujarEventos(OperacMatrices* misMatrices, vector<OperMenu>& menu){
-    if(VariablesConfig::clickOpcion != -1 && (size_t)VariablesConfig::clickOpcion < menu.size()){
-        (misMatrices->*menu[VariablesConfig::clickOpcion].method)();
+    if(VariablesConfig::clickMenu != -1 && (size_t)VariablesConfig::clickMenu < menu.size()){
+        (misMatrices->*menu[VariablesConfig::clickMenu].method)();
         //DrawText("test 02:", 340, 120, 40, DARKBLUE);
     }
 }
@@ -129,7 +129,7 @@ void selecMouse(vector<Rectangle>& botones, vector<OperMenu>& menu, int& mouseHo
 
                 if (IsMouseButtonReleased(MOUSE_BUTTON_LEFT)){
                     cout << "Seleciono en menu el index: " << mouseHoverRec << endl;
-                    VariablesConfig::clickOpcion = i;
+                    VariablesConfig::clickMenu = i;
                 }
                 break;
             }

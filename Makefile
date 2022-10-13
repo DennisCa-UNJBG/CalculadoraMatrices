@@ -26,11 +26,11 @@ clean :
 compilar: $(OBJS)
 	g++ -o ./build/main build/*.o $(FLAGS) $(HEADERS) $(LIB) $(FLAGSRAYLIB)
 
-build/main.o : src/main.cpp
+build/main.o : src/main.cpp header/config.hpp
 	g++ src/main.cpp -c -o build/main.o $(FLAGS) $(HEADERS)
 
-build/matriz.o : src/matriz.cpp header/matriz.hpp
+build/matriz.o : src/matriz.cpp header/matriz.hpp header/config.hpp
 	g++ src/matriz.cpp -c -o build/matriz.o $(FLAGS) $(HEADERS)
 
-build/opermatrices.o : src/opermatrices.cpp header/opermatrices.hpp
+build/opermatrices.o : src/opermatrices.cpp header/opermatrices.hpp header/config.hpp
 	g++ src/opermatrices.cpp -c -o build/opermatrices.o $(FLAGS) $(HEADERS)

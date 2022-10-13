@@ -8,6 +8,7 @@
 
 using std::cout;
 using std::cin;
+using std::stoi;
 using std::endl;
 
 /* implementación de los metodos de la clase  OperacMatrices */
@@ -165,7 +166,7 @@ void OperacMatrices::mostrarMenuPrincipal(void){
     OperacMatrices::openMenu = true;
 }
 
-void OperacMatrices::agregarMatriz(int& filas, int& columnas, string&nombre){
+void OperacMatrices::agregarMatriz(int filas, int columnas, string&nombre){
     Matriz* matriz;                 //crear matriz cuadrada         // crear matriz no cuadrada
     (filas == columnas) ? matriz = new Matriz(filas) : matriz = new Matriz(filas, columnas);
     matriz->rellenarMatriz();
@@ -229,26 +230,57 @@ bool OperacMatrices::noCumpleReqMulti(string& Matriz01, string& Matriz02){
     return false; // cumple todos los requisitos
 }
 
+// variables para crear una matriz
+string VariablesConfig::name = "";
+string VariablesConfig::filas = "";
+string VariablesConfig::columnas = "";
+bool VariablesConfig::clicAgregar = false;
+string VariablesConfig::impriMatriz = "";
+
 void OperacMatrices::crearMatriz(){ // se omite la variable opcion en la compilacion del programa
-    DrawText("Test: Crear matriz:", 340, 30, 20, DARKBLUE);
-    /*
-    string nombre;
-    int filas, columnas;
-    cout << "Ingrese un nombre(sin espacios) para la matriz:" << endl;
-    cin.sync(); getline(cin,nombre);
+    int x = 440;
+    int y = 30;
+    Rectangle botonesCrearMatriz[4] ={
+        {(float)(x+250), (float)(y+80), 80.0f, 20.0f}, {(float)(x+250), (float)(y+110), 80.0f, 20.0f},
+        {(float)(x+250), (float)(y+140), 80.0f, 20.0f}, {(float)(x+340), (float)(y+100), 45.0f, 40.0f}
+        };
 
-    cout << "Ingrese la cantidad de la filas de la matriz: " << endl;
-    cin >> filas;
-    cout << "Ingrese la cantidad de la columnas de la matriz: " << endl;
-    cin >> columnas;
+    DrawText("INGRESE  LOS DATOS", x, y, 30, DARKBLUE);
+    DrawText("DE LA NUEVA MATRIZ", x, y+30, 30, DARKBLUE);
+    DrawText("Nombre de la matriz:", x, y+80, 20, BLACK);
+    DrawText("Tamaño de filas:", x, y+110, 20, BLACK);
+    DrawText("Tamaño de columnas:", x, y+140, 20, BLACK);
+    input_box(botonesCrearMatriz[0], SKYBLUE, VariablesConfig::name);
+    input_box(botonesCrearMatriz[1], SKYBLUE, VariablesConfig::filas);
+    input_box(botonesCrearMatriz[2], SKYBLUE, VariablesConfig::columnas);
 
-    this->agregarMatriz(filas, columnas, nombre) ;
-    */
+    // boton agregar
+    DrawRectangleRec(botonesCrearMatriz[3], (VariablesConfig::clicAgregar) ? LIME : BLUE);
+    DrawText("+", botonesCrearMatriz[3].x+10, botonesCrearMatriz[3].y, 45, DARKBLUE);
+    if (CheckCollisionPointRec(GetMousePosition(), botonesCrearMatriz[3])){
+        if (IsMouseButtonReleased(MOUSE_BUTTON_LEFT)){
+            this->agregarMatriz(stoi(VariablesConfig::filas), stoi(VariablesConfig::columnas), VariablesConfig::name) ;
+            cout << "clic agregar-> nombre: " << VariablesConfig::name << " : " << stoi(VariablesConfig::filas) <<"*" << stoi(VariablesConfig::columnas) << endl;
+            VariablesConfig::impriMatriz = VariablesConfig::name;
+            VariablesConfig::name = "";
+            VariablesConfig::filas = "";
+            VariablesConfig::columnas = "";
+        }
+        VariablesConfig::clicAgregar = true;
+    } else
+        VariablesConfig::clicAgregar = false;
+
+    // imprimir matriz si existe
+    if(VariablesConfig::impriMatriz.size() > 0){
+        string matrizTemp = "La matriz ''" + VariablesConfig::impriMatriz + "'' los valores";
+        DrawText(matrizTemp.c_str(), x, 260, 20, DARKBLUE);
+        this->matrices[VariablesConfig::impriMatriz]->imprimirMatriz();
+    }
 }
 
 void OperacMatrices::mostrarMenuOpMatrices(){
     OperacMatrices::openMenu = false;
-    VariablesConfig::clickOpcion = -1;
+    VariablesConfig::clickMenu = -1;
 }
 
 void OperacMatrices::verMatrices(){
@@ -275,4 +307,20 @@ void OperacMatrices::salirPrograma(){
         delete valor; // liberando memoria de cada matriz
     }
     CloseWindow();
+}
+
+void OperacMatrices::input_box(Rectangle& boton, Color color, string& variable){
+    DrawRectangleRec(boton, color);
+    DrawText(variable.c_str(), (int)boton.x + 8, (int)boton.y, 20, BLACK);
+    if (CheckCollisionPointRec(GetMousePosition(), boton)){
+        int key = GetCharPressed();
+        while (key > 0)
+        {
+            variable += key;
+            cout << "Valor ingresado: " << variable << endl;
+
+            key = GetCharPressed();  // Check next character in the queue
+        }
+        DrawText("_", (int)boton.x + 8 + MeasureText(variable.c_str(), 20), (int)boton.y, 20, DARKBROWN);
+    }
 }

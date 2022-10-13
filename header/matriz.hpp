@@ -1,15 +1,12 @@
 #ifndef _MATRIZ_
 #define _MATRIZ_
-
-/* varibles globales de configuracion */
-const int TABLA = 4; // espacios para ordenar valores en la tabla
-
+#include <config.hpp>
 class Matriz{ /* clase base de una matriz */
 public:
     Matriz(int orden);
     Matriz(int filas, int columnas);
     ~Matriz();
-    void imprimirMatriz(int espacios = TABLA);
+    void imprimirMatriz(int espacios = VariablesConfig::TABLA, int coorX = VariablesConfig::coordenadaX, int coorY = VariablesConfig::coordenadaY);
     void rellenarMatriz();
     double calcularDeterminante();
     Matriz* calcularInversa(double& deter);

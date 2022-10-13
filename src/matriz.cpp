@@ -2,11 +2,16 @@
 #include <cmath>
 #include <random> // generar numeros aleatorios
 #include <iomanip> // crear una tabla
+#include <sstream> // contatenar variables en una sola
 // incluir librerias custom
 #include <matriz.hpp>
+#include <config.hpp>
+// raylib
+#include <raylib.h>
 
 using std::cout;
 using std::endl;
+using std::ostringstream;
 using std::random_device;
 using std::mt19937_64;
 using std::uniform_int_distribution;
@@ -176,15 +181,21 @@ void Matriz::rellenarMatriz(){
     }
 }
 
-void Matriz::imprimirMatriz(int espacios){
+// variables usadas en imprimir matriz
+int VariablesConfig::TABLA = 4;
+int VariablesConfig::coordenadaX = 440;
+int VariablesConfig::coordenadaY = 300;
+
+void Matriz::imprimirMatriz(int espacios, int coorX, int coorY){
     for(int i = 0 ; i < filas ; i++){
-        cout << "|";
+        ostringstream resultadoString; // almacena todos los caracteres para imprimir luego
+        resultadoString << "| ";
         for(int j = 0 ; j < columnas ; j++){
-            cout << setw(espacios) << M[i][j] << " ";
+            resultadoString << setw(espacios) << M[i][j];
             }
-        cout << "|" << endl;
+        resultadoString << " |";
+        DrawText((resultadoString.str()).c_str(), coorX, coorY+i*30, 20, DARKBLUE);
     }
-    cout << endl;
 }
 
 Matriz::Matriz(int orden){

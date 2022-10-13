@@ -4,7 +4,9 @@
 #include <map>
 #include <string>
 // incluir librerias custom
-#include "matriz.hpp"
+#include <matriz.hpp>
+// raylib
+#include <raylib.h>
 
 using std::map;
 using std::string;
@@ -27,10 +29,12 @@ public:
     void multiEscalarMatriz(void);
     void mostrarMenuPrincipal(void);
 private:
-    void agregarMatriz(int& filas, int& columnas, string&nombre);
+    void agregarMatriz(int filas, int columnas, string&nombre);
     void buscarMatriz(bool& cancelar, int cantMatriz, string& nombre /* retorna el nombre de la matriz*/);
     bool noCumpleReqSumRest(string& Matriz01, string& Matriz02);
     bool noCumpleReqMulti(string& Matriz01, string& Matriz02);
+    // extras
+    void input_box(Rectangle& boton, Color color, string& variable);
 protected:
 };
 

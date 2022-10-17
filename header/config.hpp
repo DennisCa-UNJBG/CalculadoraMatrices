@@ -42,6 +42,14 @@ public:
     static bool mouseOverResta;
     static bool cancelResta;
     static bool clickResta;
+    // multi matrices
+    static string nameMultiBuscar01;
+    static string nameMultiBuscar02;
+    static string nameMulti01;
+    static string nameMulti02;
+    static bool mouseOverMulti;
+    static bool cancelMulti;
+    static bool clickMulti;
 private:
 protected:
 };

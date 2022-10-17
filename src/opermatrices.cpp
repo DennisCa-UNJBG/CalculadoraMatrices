@@ -94,29 +94,68 @@ void OperacMatrices::inversaMatriz(void){
     */
 }
 
+// calcular Multi de matrices
+string VariablesConfig::nameMultiBuscar01 = "";
+string VariablesConfig::nameMultiBuscar02 = "";
+string VariablesConfig::nameMulti01 = "";
+string VariablesConfig::nameMulti02 = "";
+bool VariablesConfig::mouseOverMulti = false;
+bool VariablesConfig::cancelMulti = false;
+bool VariablesConfig::clickMulti = false;
+
 void OperacMatrices::multiMatrices(void){
-    DrawText("Test: multiplicar matrices:", 340, 30, 20, DARKBLUE);
-    /*
-    string nombreMatriz[2];
-    bool cancelar = false;
-    int i = 0;
-    // buscar las 2 matrices que se necesitan para la operacion
-    while (i < 2 && !cancelar){
-        this->buscarMatriz(cancelar, i+1, nombreMatriz[i]);
-        i++;
+    int x = 440;
+    int y = 100;
+    Rectangle botonesMultirMatriz[3] ={{(float)(x+240), (float)(y+80), 80.0f, 20.0f}, {(float)(x+240), (float)(y+110), 80.0f, 20.0f},
+                                        {(float)(x+330), (float)(y+90), 90.0f, 20.0f}};
+
+    DrawText("CALCULAR MULTIPLICACION", x, y, 30, DARKBLUE);
+    DrawText("          DE MATRICES ", x, y+30, 30, DARKBLUE);
+    DrawText("Nombre de la matriz 01:", x, y+80, 20, BLACK);
+    DrawText("Nombre de la matriz 02:", x, y+110, 20, BLACK);
+    input_box(botonesMultirMatriz[0], SKYBLUE, VariablesConfig::nameMultiBuscar01);
+    input_box(botonesMultirMatriz[1], SKYBLUE, VariablesConfig::nameMultiBuscar02);
+
+    // boton buscar
+    DrawRectangleRec(botonesMultirMatriz[2], (VariablesConfig::mouseOverMulti) ? LIME : BLUE);
+    DrawText("Buscar", botonesMultirMatriz[2].x+10, botonesMultirMatriz[2].y, 20, DARKBLUE);
+    if (CheckCollisionPointRec(GetMousePosition(), botonesMultirMatriz[2])){
+        if (IsMouseButtonReleased(MOUSE_BUTTON_LEFT)){
+            cout << "clic agregar-> nombres: " << VariablesConfig::nameMultiBuscar01 << "*"  << VariablesConfig::nameMultiBuscar02 << endl;
+            VariablesConfig::nameMulti01 = VariablesConfig::nameMultiBuscar01;
+            VariablesConfig::nameMulti02 = VariablesConfig::nameMultiBuscar02;
+            VariablesConfig::clickMulti = true;
+            VariablesConfig::nameMultiBuscar01 = "";
+            VariablesConfig::nameMultiBuscar02 = "";
+        }
+        VariablesConfig::mouseOverMulti = true;
+    } else {
+        VariablesConfig::mouseOverMulti = false;
     }
+    // fin boton buscar
 
-    if(cancelar) // se cancela la operacion ?
-        return;
+    if(VariablesConfig::clickMulti){
+        ostringstream message; // almacena todos los caracteres para imprimir luego
+        if(!this->buscarMatriz(VariablesConfig::nameMulti01)){
+            message << "La matriz ''" << VariablesConfig::nameMulti01 << "'' no existe";
+            DrawText((message.str()).c_str(), x-60, 260, 20, DARKBLUE);
+            return;
+        }
 
-    if(this->noCumpleReqMulti(nombreMatriz[0], nombreMatriz[1]))
-        return;
+        if(!this->buscarMatriz(VariablesConfig::nameMulti02)){
+            message << "La matriz ''" << VariablesConfig::nameMulti02 << "'' no existe";
+            DrawText((message.str()).c_str(), x-60, 260, 20, DARKBLUE);
+            return;
+        }
 
-    Matriz* temp = *(this->matrices[nombreMatriz[0]]) * *(this->matrices[nombreMatriz[1]]);
-    cout << "\nLa multiplicacion de las matrices ( " << nombreMatriz[0] << " * " << nombreMatriz[1] << " ) es:" << endl;
-    temp->imprimirMatriz();
-    delete temp; // liberar memoria
-    */
+        if(this->noCumpleReqMulti(VariablesConfig::nameMulti01, VariablesConfig::nameMulti02))
+            return;
+
+        Matriz temp = *(*(this->matrices[VariablesConfig::nameMulti01]) * *(this->matrices[VariablesConfig::nameMulti02]));
+        message << "\nLa Multiplicación de las matrices ( " << VariablesConfig::nameMulti01 << " * " << VariablesConfig::nameMulti02<< " ) es:";
+        DrawText((message.str()).c_str(), x-60, 230, 20, DARKBLUE);
+        temp.imprimirMatriz();
+    }
 }
 
 void OperacMatrices::multiEscalarMatriz(void){
@@ -199,7 +238,7 @@ void OperacMatrices::restarMatrices(void){
             return;
 
         Matriz temp = *(*(this->matrices[VariablesConfig::nameResta01]) - *(this->matrices[VariablesConfig::nameResta02]));
-        message << "\nLa Resta de las matrices ( " << VariablesConfig::nameResta01 << " - " << VariablesConfig::nameResta01<< " ) es:";
+        message << "\nLa Resta de las matrices ( " << VariablesConfig::nameResta01 << " - " << VariablesConfig::nameResta02<< " ) es:";
         DrawText((message.str()).c_str(), x-60, 230, 20, DARKBLUE);
         temp.imprimirMatriz();
     }
@@ -263,7 +302,7 @@ void OperacMatrices::sumarMatrices(void){
             return;
 
         Matriz temp = *(*(this->matrices[VariablesConfig::nameSuma01]) + *(this->matrices[VariablesConfig::nameSuma02]));
-        message << "\nLa suma de las matrices ( " << VariablesConfig::nameSuma01 << " + " << VariablesConfig::nameSuma01<< " ) es:";
+        message << "\nLa suma de las matrices ( " << VariablesConfig::nameSuma01 << " + " << VariablesConfig::nameSuma02<< " ) es:";
         DrawText((message.str()).c_str(), x-60, 230, 20, DARKBLUE);
         temp.imprimirMatriz();
     }
@@ -291,13 +330,15 @@ bool OperacMatrices::buscarMatriz(string& nombre){
 bool OperacMatrices::noCumpleReqSumRest(string& Matriz01, string& Matriz02){
     if((this->matrices[Matriz01]->getIsCuadrado() && this->matrices[Matriz02]->getIsCuadrado())){
         if(this->matrices[Matriz01]->getOrden() != this->matrices[Matriz02]->getOrden()){
-            DrawText("No se puede operar, las matrices son de dimensiones distintas...", 380, 260, 20, DARKBLUE);
+            DrawText("No se puede operar!!!", 380, 260, 20, DARKBLUE);
+            DrawText("Las matrices son de orden distintas...", 380, 290, 20, DARKBLUE);
             return true; // no cumple todos los requisitos de matrices NxN
         }
     } else {
         if(this->matrices[Matriz01]->getFilas() != this->matrices[Matriz02]->getFilas() ||
             this->matrices[Matriz01]->getColumnas() != this->matrices[Matriz02]->getColumnas()){
-            DrawText("No se puede operar, las matrices no coinciden en sus dimensiones...", 380, 260, 20, DARKBLUE);
+            DrawText("No se puede operar!!!", 380, 260, 20, DARKBLUE);
+            DrawText("Las matrices no coinciden en sus dimensiones...", 380, 290, 20, DARKBLUE);
             return true; // nocumple todos los requisitos de matrices NxM
         }
     }
@@ -307,13 +348,19 @@ bool OperacMatrices::noCumpleReqSumRest(string& Matriz01, string& Matriz02){
 bool OperacMatrices::noCumpleReqMulti(string& Matriz01, string& Matriz02){
     if((this->matrices[Matriz01]->getIsCuadrado() && this->matrices[Matriz02]->getIsCuadrado())){
         if(this->matrices[Matriz01]->getOrden() != this->matrices[Matriz02]->getOrden()){
-        cout << "No se puede operar, las matrices son de dimensiones distintas..." << endl;
-        return true; // no cumple todos los requisitos de matrices NxN
+            DrawText("No se puede operar!!!", 380, 260, 20, DARKBLUE);
+            DrawText("Las matrices son de orden distintas...", 380, 290, 20, DARKBLUE);
+            return true; // no cumple todos los requisitos de matrices NxN
         }
     } else {
         if(this->matrices[Matriz01]->getColumnas() != this->matrices[Matriz02]->getFilas()){
-            cout << "No se puede operar, las columnas de la matriz'" << Matriz01
-                << "' y las filas de la matriz '" << Matriz02 << "' no coinciden ..." << endl;
+            ostringstream message; // almacena todos los caracteres para imprimir luego
+            DrawText("No se puede operar!!!", 380, 260, 20, DARKBLUE);
+            message << "Las columnas de la matriz'" << Matriz01 << "'";
+            DrawText(message.str().c_str(), 380, 290, 20, DARKBLUE);
+            message.str("");
+            message << "y las filas de la matriz '" << Matriz02 << "' no coinciden ..." << endl;
+            DrawText(message.str().c_str(), 380, 320, 20, DARKBLUE);
             return true; // nocumple todos los requisitos de matrices NxM
         }
     }

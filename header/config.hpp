@@ -50,6 +50,14 @@ public:
     static bool mouseOverMulti;
     static bool cancelMulti;
     static bool clickMulti;
+    // multi x escalar matrices
+    static string nameEscalBuscar;
+    static string nameEscalNum;
+    static string nameEscal;
+    static string Escalnum;
+    static bool mouseOverEscal;
+    static bool cancelEscal;
+    static bool clickEscal;
 private:
 protected:
 };

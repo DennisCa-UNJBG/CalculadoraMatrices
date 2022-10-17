@@ -158,26 +158,58 @@ void OperacMatrices::multiMatrices(void){
     }
 }
 
+// calcular Multi de matrices
+string VariablesConfig::nameEscalBuscar = "";
+string VariablesConfig::nameEscalNum = "";
+string VariablesConfig::nameEscal = "";
+string VariablesConfig::Escalnum = "";
+bool VariablesConfig::mouseOverEscal = false;
+bool VariablesConfig::clickEscal = false;
+
 void OperacMatrices::multiEscalarMatriz(void){
-    DrawText("Test: multiplicar matriz por un escalar:", 340, 30, 20, DARKBLUE);
-    /*
-    string nombreMatriz;
-    bool cancelar = false;
-    // buscar la matriz que se necesita para la operacion
-    this->buscarMatriz(cancelar, 1, nombreMatriz);
+    int x = 440;
+    int y = 100;
+    Rectangle botonesMEscarMatriz[3] ={{(float)(x+240), (float)(y+80), 80.0f, 20.0f}, {(float)(x+240), (float)(y+110), 80.0f, 20.0f},
+                                        {(float)(x+330), (float)(y+90), 90.0f, 20.0f}};
 
-    if(cancelar) // se cancela la operacion ?
-        return;
+    DrawText("CALCULAR MULTIPLICACION", x, y, 30, DARKBLUE);
+    DrawText(" DE MATRIZ POR ESCALAR", x, y+30, 30, DARKBLUE);
+    DrawText("Nombre de la matriz :", x, y+80, 20, BLACK);
+    DrawText("Ingresar escalar(val):", x, y+110, 20, BLACK);
+    input_box(botonesMEscarMatriz[0], SKYBLUE, VariablesConfig::nameEscalBuscar);
+    input_box(botonesMEscarMatriz[1], SKYBLUE, VariablesConfig::nameEscalNum);
 
-    double numero;
-    cout << "Ingrese el escalar: " << endl;
-    cin >> numero;
+    // boton buscar
+    DrawRectangleRec(botonesMEscarMatriz[2], (VariablesConfig::mouseOverEscal) ? LIME : BLUE);
+    DrawText("Buscar", botonesMEscarMatriz[2].x+10, botonesMEscarMatriz[2].y, 20, DARKBLUE);
+    if (CheckCollisionPointRec(GetMousePosition(), botonesMEscarMatriz[2])){
+        if (IsMouseButtonReleased(MOUSE_BUTTON_LEFT)){
+            cout << "clic agregar-> nombres: " << VariablesConfig::nameEscalBuscar << "*"  << VariablesConfig::nameEscalNum << endl;
+            VariablesConfig::nameEscal = VariablesConfig::nameEscalBuscar;
+            VariablesConfig::Escalnum = VariablesConfig::nameEscalNum;
+            VariablesConfig::clickEscal = true;
+            VariablesConfig::nameEscalBuscar = "";
+            VariablesConfig::nameEscalNum = "";
+        }
+        VariablesConfig::mouseOverEscal = true;
+    } else {
+        VariablesConfig::mouseOverEscal = false;
+    }
+    // fin boton buscar
 
-    Matriz* temp = *(this->matrices[nombreMatriz]) * numero;
-    cout << "\nLa multiplicacion de la matriz ( " << nombreMatriz << " * " << numero << " ) es:" << endl;
-    temp->imprimirMatriz(7);
-    delete temp; // liberar memoria
-    */
+    if(VariablesConfig::clickEscal){
+        ostringstream message; // almacena todos los caracteres para imprimir luego
+        if(!this->buscarMatriz(VariablesConfig::nameEscal)){
+            message << "La matriz ''" << VariablesConfig::nameEscal << "'' no existe";
+            DrawText((message.str()).c_str(), x-60, 260, 20, DARKBLUE);
+            return;
+        }
+
+        Matriz temp = *(*(this->matrices[VariablesConfig::nameEscal]) * atof(VariablesConfig::Escalnum.c_str()));
+        message << "\nLa multiplicación de la matriz ( " << VariablesConfig::nameEscal << " * " << VariablesConfig::Escalnum << " ) es:";
+        DrawText((message.str()).c_str(), x-60, 230, 20, DARKBLUE);
+        temp.imprimirMatriz(7, 440, 300);
+    }
 }
 
 // calcular Resta de matrices

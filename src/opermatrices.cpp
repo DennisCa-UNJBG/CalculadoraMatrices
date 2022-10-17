@@ -176,7 +176,6 @@ bool VariablesConfig::cancelSuma = false;
 bool VariablesConfig::clickSuma = false;
 
 void OperacMatrices::sumarMatrices(void){
-    //DrawText("Test: sumar matrices:", 340, 30, 20, DARKBLUE);
     int x = 440;
     int y = 100;
     Rectangle botonesSumarMatriz[3] ={{(float)(x+240), (float)(y+80), 80.0f, 20.0f}, {(float)(x+240), (float)(y+110), 80.0f, 20.0f},
@@ -224,34 +223,11 @@ void OperacMatrices::sumarMatrices(void){
         if(this->noCumpleReqSumRest(VariablesConfig::nameSuma01, VariablesConfig::nameSuma02))
             return;
 
-
         Matriz temp = *(*(this->matrices[VariablesConfig::nameSuma01]) + *(this->matrices[VariablesConfig::nameSuma02]));
         message << "\nLa suma de las matrices ( " << VariablesConfig::nameSuma01 << " + " << VariablesConfig::nameSuma01<< " ) es:";
-        //cout << message.str() << endl;
         DrawText((message.str()).c_str(), x-60, 230, 20, DARKBLUE);
         temp.imprimirMatriz();
     }
-    /*
-    string nombreMatriz[2];
-    bool cancelar = false;
-    int i = 0;
-    // buscar las 2 matrices que se necesitan para la operacion
-    while (i < 2 && !cancelar){
-        this->buscarMatriz(cancelar, i+1, nombreMatriz[i]);
-        i++;
-    }
-
-    if(cancelar) // se cancela la operacion ?
-        return;
-
-    if(this->noCumpleReqSumRest(nombreMatriz[0], nombreMatriz[1]))
-        return;
-
-    Matriz* temp = *(this->matrices[nombreMatriz[0]]) + *(this->matrices[nombreMatriz[1]]);
-    cout << "\nLa suma de las matrices ( " << nombreMatriz[0] << " + " << nombreMatriz[1] << " ) es:" << endl;
-    temp->imprimirMatriz();
-    delete temp;  // liberar memoria
-    */
 }
 
 void OperacMatrices::mostrarMenuPrincipal(void){
@@ -262,7 +238,6 @@ void OperacMatrices::agregarMatriz(int filas, int columnas, string&nombre){
     Matriz* matriz;                 //crear matriz cuadrada         // crear matriz no cuadrada
     (filas == columnas) ? matriz = new Matriz(filas) : matriz = new Matriz(filas, columnas);
     matriz->rellenarMatriz();
-    cout << "\nLa matriz ingresada tiene los valores es:" << endl;
     matriz->imprimirMatriz();
     matrices[nombre] = matriz;
 }
@@ -278,14 +253,12 @@ bool OperacMatrices::noCumpleReqSumRest(string& Matriz01, string& Matriz02){
     if((this->matrices[Matriz01]->getIsCuadrado() && this->matrices[Matriz02]->getIsCuadrado())){
         if(this->matrices[Matriz01]->getOrden() != this->matrices[Matriz02]->getOrden()){
             DrawText("No se puede operar, las matrices son de dimensiones distintas...", 380, 260, 20, DARKBLUE);
-            cout << "No se puede operar, las matrices son de dimensiones distintas..." << endl;
             return true; // no cumple todos los requisitos de matrices NxN
         }
     } else {
         if(this->matrices[Matriz01]->getFilas() != this->matrices[Matriz02]->getFilas() ||
             this->matrices[Matriz01]->getColumnas() != this->matrices[Matriz02]->getColumnas()){
             DrawText("No se puede operar, las matrices no coinciden en sus dimensiones...", 380, 260, 20, DARKBLUE);
-            cout << "No se puede operar, las matrices no coinciden en sus dimensiones..." << endl;
             return true; // nocumple todos los requisitos de matrices NxM
         }
     }

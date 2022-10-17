@@ -64,34 +64,64 @@ void OperacMatrices::deterMatriz(void){
     }
 }
 
+// calcular inversa
+string VariablesConfig::nameInverBuscar = "";
+string VariablesConfig::nameInver = "";
+bool VariablesConfig::mouseOverInver = false;
+bool VariablesConfig::clickInver = false;
+
 void OperacMatrices::inversaMatriz(void){
-    DrawText("Test: calcular inversa de una matriz", 340, 30, 20, DARKBLUE);
-    /*
-    string nombreMatriz;
-    bool cancelar = false;
-    // buscar la matriz que se necesita para la operacion
-    this->buscarMatriz(cancelar, 1, nombreMatriz);
+    int x = 440;
+    int y = 100;
+    Rectangle botonesInverMatriz[2] ={{(float)(x+220), (float)(y+80), 80.0f, 20.0f}, {(float)(x+310), (float)(y+80), 90.0f, 20.0f}};
 
-    if(cancelar) // se cancela la operacion ?
-        return;
+    DrawText("CALCULAR INVERSA", x, y, 30, DARKBLUE);
+    DrawText("  DE UNA MATRIZ ", x, y+30, 30, DARKBLUE);
+    DrawText("Nombre de la matriz:", x, y+80, 20, BLACK);
+    input_box(botonesInverMatriz[0], SKYBLUE, VariablesConfig::nameInverBuscar);
 
-    if(!this->matrices[nombreMatriz]->getIsCuadrado()){
-        cout << "La matriz '" << nombreMatriz << "' no tiene inversa, no es cuadrada..." << endl;
-        return;
+    // boton buscar
+    DrawRectangleRec(botonesInverMatriz[1], (VariablesConfig::mouseOverInver) ? LIME : BLUE);
+    DrawText("Buscar", botonesInverMatriz[1].x+10, botonesInverMatriz[1].y, 20, DARKBLUE);
+    if (CheckCollisionPointRec(GetMousePosition(), botonesInverMatriz[1])){
+        if (IsMouseButtonReleased(MOUSE_BUTTON_LEFT)){
+            cout << "clic agregar-> nombre - " << VariablesConfig::nameInverBuscar << endl;
+            VariablesConfig::nameInver = VariablesConfig::nameInverBuscar;
+            VariablesConfig::clickInver = true;
+            VariablesConfig::nameInverBuscar = "";
+        }
+        VariablesConfig::mouseOverInver = true;
+    } else {
+        VariablesConfig::mouseOverInver = false;
     }
+    // fin boton buscar
 
-    double det = this->matrices[nombreMatriz]->calcularDeterminante();
-    if(det == 0){
-        cout << "La determinante es CERO, la matriz no tiene inversa..." << endl;
-        return;
+    if(VariablesConfig::clickInver){
+        if(this->buscarMatriz(VariablesConfig::nameInver)){
+            ostringstream message; // almacena todos los caracteres para imprimir luego
+            if(!this->matrices[VariablesConfig::nameInver]->getIsCuadrado()){
+                message << "La matriz '" << VariablesConfig::nameInver << "' no tiene Inversa, no es cuadrada... ";
+                DrawText((message.str()).c_str(), x-60, 260, 20, DARKBLUE);
+                return;
+            }
+            double det = this->matrices[VariablesConfig::nameInver]->calcularDeterminante();
+            if(det == 0){
+                message << "La determinante es CERO, la matriz no tiene inversa...";
+                DrawText((message.str()).c_str(), x-60, 260, 20, DARKBLUE);
+                return;
+            }
+
+            message << "La determinante de la matriz ''" << VariablesConfig::nameMatriz << "'' es: " << det;
+            DrawText((message.str()).c_str(), x-60, 260, 20, DARKBLUE);
+            message.str("");
+            Matriz matriz = *(this->matrices[VariablesConfig::nameInver]->calcularInversa(det));
+            message << "La inversa de la matriz '" << VariablesConfig::nameInver << "' es :";
+            DrawText((message.str()).c_str(), x-60, 290, 20, DARKBLUE);
+            matriz.imprimirMatriz(7, 440, 330);
+        }else {
+            DrawText("La matriz indicada no existe", x-60, 260, 20, DARKBLUE);
+        }
     }
-
-    Matriz* matriz = this->matrices[nombreMatriz]->calcularInversa(det);
-    cout << "La inversa de la matriz '" << nombreMatriz << "' es :" << endl;
-    matriz->imprimirMatriz(7);
-    cout << "La determinante es: " << det << endl;
-    delete matriz; // liberar memoria
-    */
 }
 
 // calcular Multi de matrices

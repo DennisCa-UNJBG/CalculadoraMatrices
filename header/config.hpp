@@ -26,6 +26,11 @@ public:
     static bool mouseOverDeter;
     static bool CancelDeter;
     static bool clickDeter;
+    // calcular inversa
+    static string nameInverBuscar;
+    static string nameInver;
+    static bool mouseOverInver;
+    static bool clickInver;
     // sumar matrices
     static string nameSumaBuscar01;
     static string nameSumaBuscar02;

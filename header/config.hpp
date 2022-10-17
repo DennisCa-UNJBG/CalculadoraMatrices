@@ -34,6 +34,14 @@ public:
     static bool mouseOverSuma;
     static bool cancelSuma;
     static bool clickSuma;
+    // restar matrices
+    static string nameRestaBuscar01;
+    static string nameRestaBuscar02;
+    static string nameResta01;
+    static string nameResta02;
+    static bool mouseOverResta;
+    static bool cancelResta;
+    static bool clickResta;
 private:
 protected:
 };

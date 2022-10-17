@@ -141,29 +141,68 @@ void OperacMatrices::multiEscalarMatriz(void){
     */
 }
 
+// calcular Resta de matrices
+string VariablesConfig::nameRestaBuscar01 = "";
+string VariablesConfig::nameRestaBuscar02 = "";
+string VariablesConfig::nameResta01 = "";
+string VariablesConfig::nameResta02 = "";
+bool VariablesConfig::mouseOverResta = false;
+bool VariablesConfig::cancelResta = false;
+bool VariablesConfig::clickResta = false;
+
 void OperacMatrices::restarMatrices(void){
-    DrawText("Test: restar matrices:", 340, 30, 20, DARKBLUE);
-    /*
-    string nombreMatriz[2];
-    bool cancelar = false;
-    int i = 0;
-    // buscar las 2 matrices que se necesitan para la operacion
-    while (i < 2 && !cancelar){
-        this->buscarMatriz(cancelar, i+1, nombreMatriz[i]);
-        i++;
+    int x = 440;
+    int y = 100;
+    Rectangle botonesRestarMatriz[3] ={{(float)(x+240), (float)(y+80), 80.0f, 20.0f}, {(float)(x+240), (float)(y+110), 80.0f, 20.0f},
+                                        {(float)(x+330), (float)(y+90), 90.0f, 20.0f}};
+
+    DrawText("CALCULAR RESTA", x, y, 30, DARKBLUE);
+    DrawText("  DE MATRICES ", x, y+30, 30, DARKBLUE);
+    DrawText("Nombre de la matriz 01:", x, y+80, 20, BLACK);
+    DrawText("Nombre de la matriz 02:", x, y+110, 20, BLACK);
+    input_box(botonesRestarMatriz[0], SKYBLUE, VariablesConfig::nameRestaBuscar01);
+    input_box(botonesRestarMatriz[1], SKYBLUE, VariablesConfig::nameRestaBuscar02);
+
+    // boton buscar
+    DrawRectangleRec(botonesRestarMatriz[2], (VariablesConfig::mouseOverResta) ? LIME : BLUE);
+    DrawText("Buscar", botonesRestarMatriz[2].x+10, botonesRestarMatriz[2].y, 20, DARKBLUE);
+    if (CheckCollisionPointRec(GetMousePosition(), botonesRestarMatriz[2])){
+        if (IsMouseButtonReleased(MOUSE_BUTTON_LEFT)){
+            cout << "clic agregar-> nombres: " << VariablesConfig::nameRestaBuscar01 << "-"  << VariablesConfig::nameRestaBuscar02 << endl;
+            VariablesConfig::nameResta01 = VariablesConfig::nameRestaBuscar01;
+            VariablesConfig::nameResta02 = VariablesConfig::nameRestaBuscar02;
+            VariablesConfig::clickResta = true;
+            VariablesConfig::nameRestaBuscar01 = "";
+            VariablesConfig::nameRestaBuscar02 = "";
+        }
+        VariablesConfig::mouseOverResta = true;
+    } else {
+        VariablesConfig::mouseOverResta = false;
     }
+    // fin boton buscar
 
-    if(cancelar) // se cancela la operacion ?
-        return;
+    if(VariablesConfig::clickResta){
+        ostringstream message; // almacena todos los caracteres para imprimir luego
+        if(!this->buscarMatriz(VariablesConfig::nameResta01)){
+            message << "La matriz ''" << VariablesConfig::nameResta01 << "'' no existe";
+            DrawText((message.str()).c_str(), x-60, 260, 20, DARKBLUE);
+            return;
+        }
 
-    if(this->noCumpleReqSumRest(nombreMatriz[0], nombreMatriz[1]))
-        return;
+        if(!this->buscarMatriz(VariablesConfig::nameResta02)){
+            message << "La matriz ''" << VariablesConfig::nameResta02 << "'' no existe";
+            DrawText((message.str()).c_str(), x-60, 260, 20, DARKBLUE);
+            return;
+        }
 
-    Matriz* temp = *(this->matrices[nombreMatriz[0]]) - *(this->matrices[nombreMatriz[1]]);
-    cout << "\nLa resta de las matrices ( " << nombreMatriz[0] << " - " << nombreMatriz[1] << " ) es:" << endl;
-    temp->imprimirMatriz();
-    delete temp;  // liberar memoria
-    */
+        if(this->noCumpleReqSumRest(VariablesConfig::nameResta01, VariablesConfig::nameResta02))
+            return;
+
+        Matriz temp = *(*(this->matrices[VariablesConfig::nameResta01]) - *(this->matrices[VariablesConfig::nameResta02]));
+        message << "\nLa Resta de las matrices ( " << VariablesConfig::nameResta01 << " - " << VariablesConfig::nameResta01<< " ) es:";
+        DrawText((message.str()).c_str(), x-60, 230, 20, DARKBLUE);
+        temp.imprimirMatriz();
+    }
 }
 
 // calcular suma de matrices
@@ -181,8 +220,8 @@ void OperacMatrices::sumarMatrices(void){
     Rectangle botonesSumarMatriz[3] ={{(float)(x+240), (float)(y+80), 80.0f, 20.0f}, {(float)(x+240), (float)(y+110), 80.0f, 20.0f},
                                         {(float)(x+330), (float)(y+90), 90.0f, 20.0f}};
 
-    DrawText("CALCULAR DETERMINANTE", x, y, 30, DARKBLUE);
-    DrawText("    DE UNA MATRIZ    ", x, y+30, 30, DARKBLUE);
+    DrawText("CALCULAR SUMA", x, y, 30, DARKBLUE);
+    DrawText(" DE MATRICES ", x, y+30, 30, DARKBLUE);
     DrawText("Nombre de la matriz 01:", x, y+80, 20, BLACK);
     DrawText("Nombre de la matriz 02:", x, y+110, 20, BLACK);
     input_box(botonesSumarMatriz[0], SKYBLUE, VariablesConfig::nameSumaBuscar01);

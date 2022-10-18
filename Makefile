@@ -19,8 +19,8 @@ compilar: $(OBJS)
 build/main.o : src/main.cpp
 	g++ src/main.cpp -c -o build/main.o $(FLAGS) $(HEADERS)
 
-build/matriz.o : header/matriz.cpp header/matriz.hpp
-	g++ header/matriz.cpp -c -o build/matriz.o $(FLAGS) $(HEADERS)
+build/matriz.o : src/matrices/matriz.cpp header/matriz.hpp
+	g++ src/matrices/matriz.cpp -c -o build/matriz.o $(FLAGS) $(HEADERS)
 
-build/opermatrices.o : header/opermatrices.cpp header/opermatrices.hpp
-	g++ header/opermatrices.cpp -c -o build/opermatrices.o $(FLAGS) $(HEADERS)
+build/opermatrices.o : src/matrices/opermatrices.cpp header/opermatrices.hpp
+	g++ src/matrices/opermatrices.cpp -c -o build/opermatrices.o $(FLAGS) $(HEADERS)

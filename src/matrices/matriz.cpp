@@ -12,10 +12,6 @@ using std::mt19937_64;
 using std::uniform_int_distribution;
 using std::setw;
 
-/* varibles globales de configuracion */
-const int MIN = -10; // minimo valor aleatorio
-const int MAX = 10; // maximo valor aleatorio
-
 /* implementación de los metodos de la clase  Matriz */
 Matriz* operator+(Matriz& matriz01, Matriz& matriz02){
     Matriz* resultado = new Matriz(matriz01.filas, matriz01.columnas);
@@ -83,7 +79,7 @@ Matriz* operator*(Matriz& matriz01, double numero){
     return resultado;
 }
 
-Matriz* Matriz::traspuesta(){
+Matriz* Matriz::traspuesta(void){
     Matriz* resultado = new Matriz(this->orden);
     for (int i = 0; i < this->orden; i++){
         for (int j = 0; j < this->orden; j++){
@@ -155,7 +151,7 @@ double Matriz::determinante(double** matriz, int orden){
     return det;
 }
 
-double Matriz::calcularDeterminante(){
+double Matriz::calcularDeterminante(void){
 	/* fuentes:
     https://www.youtube.com/watch?v=VMe384nPYi4
     https://algoritmosyalgomas.com/determinante-de-una-matriz-de-cualquier-orden-c/#Codigo-fuente-en-C
@@ -164,7 +160,7 @@ double Matriz::calcularDeterminante(){
 	return deter;
 }
 
-void Matriz::rellenarMatriz(){
+void Matriz::rellenarMatriz(void){
     random_device rd;
     mt19937_64 generator(rd());
     uniform_int_distribution<int> distribution(MIN, MAX);

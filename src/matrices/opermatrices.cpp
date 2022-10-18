@@ -1,10 +1,100 @@
 #include <iostream>
+#include <vector>
+#include <sstream> // convertir string a int
+// librerias custom
 #include <matriz.hpp>
 #include <opermatrices.hpp>
 
 using std::cout;
+using std::vector;
 using std::cin;
+using std::stringstream;
 using std::endl;
+
+struct OperMatrices{  /* estructura para controlar las opciones del menu de operaciones */
+    string opciones;
+    void (OperacMatrices::*method)(void);
+};
+
+vector <OperMatrices> MenuMatrices = { // opciones del menu de operaciones
+    { "Crear nueva matriz",                      &OperacMatrices::crearMatriz},
+    { "Ver matrices existentes",                 &OperacMatrices::verMatrices},
+    { "Calcular la determinante de una matriz",  &OperacMatrices::deterMatriz }, // 1 matriz X
+    { "Calcular la inversa de una matriz",       &OperacMatrices::inversaMatriz }, // 1 matriz X
+    { "Sumar matrices",                          &OperacMatrices::sumarMatrices }, // 2 matrices
+    { "Restar matrices",                         &OperacMatrices::restarMatrices }, // 2 matrices
+    { "multiplar matrices",                      &OperacMatrices::multiMatrices }, // 2 matrices
+    { "multiplar matriz por un escalar",         &OperacMatrices::multiEscalarMatriz }, // 1 matriz X y 1 entero
+    { "Regresar al menu Principal",              &OperacMatrices::salirMenuOper } // cambiar variable global
+}; // empleamos los punteros a metodos de clase
+
+void OperacMatrices::mostrarMenu(){
+    while(openMenu){
+        system("cls");
+
+        string sOpcion;
+        int iOpcion;
+        mostrarOpciones();
+
+        cout << "\nSelecciona una opcion del menu: ";
+        cin.sync(); getline(cin,sOpcion);
+
+        //convertir lo que se ingrese a entero omitiendo letras y signos
+        stringstream ss;
+        ss << sOpcion;
+        ss >> iOpcion;
+
+        seleccionarOpcion(iOpcion);
+    }
+}
+
+void OperacMatrices::seleccionarOpcion(int opcion){
+    if((size_t)opcion > MenuMatrices.size() || opcion <= 0)
+        cout << "ERROR: Valor ingresado no valido" << endl;
+    else
+        (this->*MenuMatrices[opcion-1].method)();
+
+    // no lanzar el pause si se elige la ultima opcion
+    if((size_t)opcion != MenuMatrices.size())
+        system("pause");
+}
+
+void  OperacMatrices::mostrarOpciones(){
+    cout << "\n\tOPERACIONES CON MATRICES\n"
+        << "******************************\n"
+        << endl;
+
+    for(size_t i = 0; i < MenuMatrices.size(); i++)
+        cout << i+1 << ". " << MenuMatrices[i].opciones << endl;
+}
+
+void OperacMatrices::crearMatriz(){ // se omite la variable opcion en la compilacion del programa
+    string nombre;
+    int filas, columnas;
+    cout << "Ingrese un nombre(sin espacios) para la matriz:" << endl;
+    cin.sync(); getline(cin,nombre);
+
+    cout << "Ingrese la cantidad de la filas de la matriz: " << endl;
+    cin >> filas;
+    cout << "Ingrese la cantidad de la columnas de la matriz: " << endl;
+    cin >> columnas;
+
+    this->agregarMatriz(filas, columnas, nombre) ;
+}
+
+void OperacMatrices::verMatrices(){
+    map<string, Matriz*>::iterator iterador;
+    cout << "\n\nImprimiendo matrices almacenadas: \n" << endl;
+    for (iterador = this->matrices.begin(); iterador != this->matrices.end(); iterador++){
+        // "first" tiene la clave. "second" el valor
+        string clave = iterador->first;
+        Matriz* valor = iterador->second;
+        // usamos las variables Clave/Valor para mostrar resultados en pantalla
+        cout << "La matriz : " << clave
+            << "\nTiene los  valores:" << endl;
+        valor->imprimirMatriz();
+    }
+}
 
 /* implementación de los metodos de la clase  OperacMatrices */
 
@@ -140,7 +230,7 @@ void OperacMatrices::sumarMatrices(void){
 }
 
 void OperacMatrices::salirMenuOper(void){
-    OperacMatrices::openMenu = true;
+    openMenu = false;
 }
 
 void OperacMatrices::agregarMatriz(int& filas, int& columnas, string&nombre){

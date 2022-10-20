@@ -6,6 +6,8 @@
 // incluir librerias custom
 #include <matriz.hpp>
 #include <opermatrices.hpp>
+#include <ecuaciones.hpp>
+#include <operecuaciones.hpp>
 
 using namespace std;
 
@@ -16,6 +18,10 @@ int Matriz::MIN = -10; // minimo valor aleatorio
 int Matriz::MAX = 10; // maximo valor aleatorio
 int Matriz::TABLA = 4; // espacios para ordenar valores en la tabla
 OperacMatrices misMatrices = OperacMatrices();
+bool OperEcuaciones::openMenu = false; // true -> abrir menu , false -> cerrar menu
+int Ecuaciones::MIN = -10; // minimo valor aleatorio
+int Ecuaciones::MAX = 10; // maximo valor aleatorio
+OperEcuaciones misEcuaciones = OperEcuaciones();
 
 /* opciones del menu principal */
 void menuPrincipal(void);
@@ -57,17 +63,25 @@ int main(/*int argc, char *argv[]*/){ /* programa principal */
 }
 
 void salirPrograma(int /*opcion*/){
-    map<string, Matriz*>::iterator iterador;
-    for (iterador = misMatrices.matrices.begin(); iterador != misMatrices.matrices.end(); iterador++){
-        Matriz* valor = iterador->second;
+    //borrar memoria de las operaciones con matrices
+    map<string, Matriz*>::iterator iterador01;
+    for (iterador01 = misMatrices.matrices.begin(); iterador01 != misMatrices.matrices.end(); iterador01++){
+        Matriz* valor = iterador01->second;
+        delete valor; // liberando memoria de cada matriz
+    }
+    //borrar memoria de las operaciones con ecuaciones
+    map<string, Ecuaciones*>::iterator iterador02;
+    for (iterador02 = misEcuaciones.matrices.begin(); iterador02 != misEcuaciones.matrices.end(); iterador02++){
+        Ecuaciones* valor = iterador02->second;
         delete valor; // liberando memoria de cada matriz
     }
     ejecutando = false;
 }
 
 void abrirMenuEcuaciones(int /*opcion*/){
-    cout << "En construcción..." << endl;
-    system("pause");
+    OperEcuaciones::openMenu = true;
+    system("cls");
+    misEcuaciones.mostrarMenu();
 }
 
 void abrirMenuMatrices(int /*opcion*/){

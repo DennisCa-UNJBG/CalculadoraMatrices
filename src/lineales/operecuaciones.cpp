@@ -19,8 +19,8 @@ struct Operaciones{  /* estructura para controlar las opciones del menu de opera
 
 vector <Operaciones> MenuEcuaciones = { // opciones del menu de operaciones
     { "Crear nueva matriz",                      &OperEcuaciones::crearMatriz }
-    ,{ "Ver matrices de ecuaciones existentes",  &OperEcuaciones::crearMatriz }
-    ,{ "Calcular incognitas - Gauss",            &OperEcuaciones::crearMatriz }
+    ,{ "Ver matrices de ecuaciones existentes",  &OperEcuaciones::verMatrices }
+    ,{ "Calcular incognitas - Gauss",            &OperEcuaciones::calcularGauss }
     ,{ "Regresar al menu Principal",             &OperEcuaciones::salirMenu }
 }; // empleamos los punteros a metodos de clase
 
@@ -41,6 +41,35 @@ void OperEcuaciones::mostrarMenu(){
         ss >> iOpcion;
 
         seleccionarOpcion(iOpcion);
+    }
+}
+
+
+void OperEcuaciones::calcularGauss(){
+    string nombreMatriz;
+    bool cancelar = false;
+    // buscar la matriz que se necesita para la operacion
+    this->buscarMatriz(cancelar, 1, nombreMatriz);
+
+    if(cancelar)
+        return;
+
+    cout << "La matriz '" << nombreMatriz
+        << "' esta siendo procesada empleando Gauss." << endl;
+    this->matrices[nombreMatriz]->metodoGauss();
+}
+
+void OperEcuaciones::verMatrices(){
+    map<string, Ecuaciones*>::iterator iterador;
+    cout << "\n\nImprimiendo matrices de ecuaciones lineales almacenadas: \n" << endl;
+    for (iterador = this->matrices.begin(); iterador != this->matrices.end(); iterador++){
+        // "first" tiene la clave. "second" el valor
+        string clave = iterador->first;
+        Ecuaciones* valor = iterador->second;
+        // usamos las variables Clave/Valor para mostrar resultados en pantalla
+        cout << "La matriz de ecuaciones lineales: '" << clave
+            << "'\nTiene los  valores:" << endl;
+        valor->imprimir();
     }
 }
 
@@ -85,4 +114,27 @@ void OperEcuaciones::seleccionarOpcion(int opcion){
     // no lanzar el pause si se elige la ultima opcion
     if((size_t)opcion != MenuEcuaciones.size())
         system("pause");
+}
+
+void OperEcuaciones::buscarMatriz(bool& cancelar, int cantMatriz, string& nombre){
+    bool matrizEncontrada = false;
+    int intentos = 2; // cantidad de intentos para buscar una matriz
+    do{
+        cout << "\nIngrese el nombre de la matriz 0" << cantMatriz << ": " << endl;
+        cin.sync(); getline(cin,nombre);
+
+        if (this->matrices.count(nombre)){ // count() -> verifica si existe un item con X nombre
+            cout << "Sus elementos son:" << endl;
+            this->matrices[nombre]->imprimir();
+            matrizEncontrada = true;
+        } else {
+            cout << "La matriz '" << nombre <<"' no se encuentra...\n"
+                << "Le queda " << intentos << " intentos." << endl;
+
+            if(intentos == 0)
+                cancelar = true;
+
+            intentos--;
+        }
+    }while (intentos >= 0 && !matrizEncontrada);
 }

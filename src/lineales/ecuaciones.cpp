@@ -1,4 +1,6 @@
 #include <iostream>
+#include <vector>
+#include <array>
 #include <iomanip> // crear una tabla
 #include <random> // generar numeros aleatorios
 // libreria custom
@@ -13,6 +15,8 @@ using std::uniform_int_distribution;
 using std::setw;
 using std::setprecision;
 using std::abs;
+using std::vector;
+using std::array;
 
 void Ecuaciones::metodoGauss(){
     Ecuaciones* temporal = new Ecuaciones(this->filas);
@@ -52,9 +56,8 @@ void Ecuaciones::metodoGauss(){
     for(int k = 0; k < filas; k++){
         if(temporal->matriz[k][k] == 0){
             cout << "La matriz no tiene solucion, un elemento de la diagonal es 0..." << endl;
-            break;
-        }
-        else {
+            return;
+        } else {
             // metodo de gauss
             for(int i = k+1; i < filas; i++){ // recorremos la fila
                 double aux = temporal->matriz[i][k]; // guardamos para evitar que se pierda el valor original al reemplazar la fila
@@ -67,6 +70,48 @@ void Ecuaciones::metodoGauss(){
             }
         }
     }
+
+    // Vertificar que los elementos operados sean igual a CERO(matriz escalonada)
+    bool fallo = false;
+    for(int i=1; i < temporal->filas; i++){
+        for(int j=0; j < i; j++){
+            if(temporal->matriz[i][j] != 0)
+                fallo = true; // alguno de los elementos de la escalera inferior es diferente de CERO
+        }
+    }
+
+    if(fallo){
+        cout << "Imposible calcular las incognitas, el metodo de GAUSS fallo..." << endl;
+        return;
+    }
+    system("pause");
+    // imprimir resultado de las incognitas
+    int filT = temporal->filas;
+    int colT = temporal->columnas;
+    double* incognitas = new double[filT];
+    // ultima incognita
+    incognitas[filT-1] = temporal->matriz[filT-1][colT-1]/temporal->matriz[filT-1][colT-2];
+    double operacion = 0;
+    cout << incognitas[filT-1] << endl;
+    for(int i=filT-2; i >= 0; i--){
+        for(int j=i+1; j < colT-1; j++){
+            //cout << temporal->matriz[i][j] << "*" << incognitas[j]<< " + " << endl;
+            //system("pause");
+            operacion += temporal->matriz[i][j] * incognitas[j];
+        }
+        //cout << endl;
+        incognitas[i] = (temporal->matriz[i][temporal->columnas-1]-operacion)/temporal->matriz[i][i];
+        //cout << temporal->matriz[i][temporal->columnas-1] <<"-"<< operacion << "/"<<temporal->matriz[i][i] <<endl;
+        //cout << incognitas[i] << endl;
+        //cout << endl;
+        //system("pause");
+    }
+    // imprimir valor de las incognitas
+    int caracter = 97;
+    for(int i = 0; i < filT; i++){
+        cout << (char)(caracter+i) << " = " << incognitas[i] << endl;
+    }
+    system("pause");
     delete temporal; // liberar memoria
 }
 

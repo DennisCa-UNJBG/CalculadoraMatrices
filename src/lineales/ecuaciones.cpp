@@ -18,6 +18,25 @@ using std::abs;
 using std::vector;
 using std::array;
 
+void Ecuaciones::pivoteoMatriz(){
+    float mayor, comparar, aux1, aux2;
+    for(int k = 0; k < filas; k++){
+        mayor = abs(matriz[k][0]);
+        for(int i = k+1; i < filas; i++){
+            comparar = abs(matriz[i][0]);
+            if(mayor < comparar){
+                mayor = comparar;
+                for(int j = 0; j < columnas; j++){ // intercambiamos filas
+                    aux1 = matriz[k][j];
+                    aux2 = matriz[i][j];
+                    matriz[k][j] = aux2;
+                    matriz[i][j] = aux1;
+                }
+            }
+        }
+    }
+}
+
 void Ecuaciones::metodoGauss(){
     Ecuaciones* temporal = new Ecuaciones(this->filas);
     // copiar datos de la matriz original
@@ -27,28 +46,8 @@ void Ecuaciones::metodoGauss(){
         }
     }
 
-    // buscamos el índice con coeficiente menor
-    float menor, comparar, aux1, aux2;
-    //int iter = 1;
-    // pivote - intercambiamos filas en la matriz de menor a mayor
-    for(int k = 0; k < filas; k++){
-        menor = abs(temporal->matriz[k][0]);
-        for(int i = k+1; i < filas; i++){
-            comparar = abs(temporal->matriz[i][0]);
-            if(menor > comparar){
-                menor = comparar;
-                for(int j = 0; j < columnas; j++){ // intercambiamos filas
-                    aux1 = temporal->matriz[k][j];
-                    aux2 = temporal->matriz[i][j];
-                    temporal->matriz[k][j] = aux2;
-                    temporal->matriz[i][j] = aux1;
-                }
-                /*cout << "\n0" << iter++ << " iteracion: " << menor << endl;
-                temporal->imprimir();*/
-            }
-        }
-    }
-    cout << "\nLuego de ordenas las ecuaciones de menor a mayor obtenemos: " << endl;
+    temporal->pivoteoMatriz(); // ordenar ecuaciones por el primer elemento de mayor a menor
+    cout << "\nLuego de ordenas las ecuaciones de mayor a menor obtenemos: " << endl;
     temporal->imprimir();
 
     int iterador = 1;
@@ -62,7 +61,6 @@ void Ecuaciones::metodoGauss(){
             for(int i = k+1; i < filas; i++){ // recorremos la fila
                 double aux = temporal->matriz[i][k]; // guardamos para evitar que se pierda el valor original al reemplazar la fila
                 for(int j = k; j < columnas; j++){ // recorremos las columnas de la fila
-                    //cout << temporal->matriz[i][j]<<"=" << temporal->matriz[i][j]<<" - "<<aux<<"/"<<temporal->matriz[k][k]<<" * " <<temporal->matriz[k][j] <<  endl; // verificar formulas
                     temporal->matriz[i][j] = temporal->matriz[i][j] - (aux/temporal->matriz[k][k]) * temporal->matriz[k][j];
                 }
                 cout << "\n0" << iterador++ << " iteracion:" << endl;
@@ -84,19 +82,19 @@ void Ecuaciones::metodoGauss(){
         cout << "Imposible calcular las incognitas, el metodo de GAUSS fallo..." << endl;
         return;
     }
-    system("pause");
-    // imprimir resultado de las incognitas
+
+    /* obtener el valor de las incognitas */
     int filT = temporal->filas;
     int colT = temporal->columnas;
     double* incognitas = new double[filT];
-    // ultima incognita
+
+    // obtenemos la ultima incognita para operar el resto
     incognitas[filT-1] = temporal->matriz[filT-1][colT-1]/temporal->matriz[filT-1][colT-2];
     double operacion = 0;
-    cout << incognitas[filT-1] << endl;
+    //cout << incognitas[filT-1] << endl;
     for(int i=filT-2; i >= 0; i--){
         for(int j=i+1; j < colT-1; j++){
             //cout << temporal->matriz[i][j] << "*" << incognitas[j]<< " + " << endl;
-            //system("pause");
             operacion += temporal->matriz[i][j] * incognitas[j];
         }
         //cout << endl;
@@ -104,14 +102,14 @@ void Ecuaciones::metodoGauss(){
         //cout << temporal->matriz[i][temporal->columnas-1] <<"-"<< operacion << "/"<<temporal->matriz[i][i] <<endl;
         //cout << incognitas[i] << endl;
         //cout << endl;
-        //system("pause");
+        operacion = 0; // reiniciando sumador
     }
+
     // imprimir valor de las incognitas
     int caracter = 97;
-    for(int i = 0; i < filT; i++){
+    for(int i = 0; i < filT; i++)
         cout << (char)(caracter+i) << " = " << incognitas[i] << endl;
-    }
-    system("pause");
+
     delete temporal; // liberar memoria
 }
 

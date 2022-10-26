@@ -10,8 +10,8 @@ public:
     void imprimir(int espacios = 7); // min 5
     void rellenar(void);
     void metodoGauss(void);
-    // Falta implementar: metodo para ordenar la matriz de menor a mayor
-    void matrizEscalonada(int espacios = 7);
+    // metodo para ordenar ecuaciones por el primer elemento de mayor a menor
+    void pivoteoMatriz(); // pivoteo
 private:
     double** matriz;
     int filas;

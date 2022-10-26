@@ -44,7 +44,6 @@ void OperEcuaciones::mostrarMenu(){
     }
 }
 
-
 void OperEcuaciones::calcularGauss(){
     string nombreMatriz;
     bool cancelar = false;

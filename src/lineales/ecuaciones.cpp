@@ -1,6 +1,4 @@
 #include <iostream>
-#include <vector>
-#include <array>
 #include <iomanip> // crear una tabla
 #include <random> // generar numeros aleatorios
 // libreria custom
@@ -15,15 +13,61 @@ using std::uniform_int_distribution;
 using std::setw;
 using std::setprecision;
 using std::abs;
-using std::vector;
-using std::array;
 
-void Ecuaciones::pivoteoMatriz(){
+void Ecuaciones::imprimirIncognitas(double* array){
+    int caracter = 97;
+    for(int i = 0; i < this->filas; i++)
+        cout << (char)(caracter+i) << " = " << array[i] << endl;
+}
+
+void Ecuaciones::metodoGaussSeidel(int cantIter){
+    // usamos una variable temporal para no afectar a la matriz original
+    Ecuaciones* temporal = new Ecuaciones(this->filas);
+    // copiar datos de la matriz original
+    for(int i=0; i < this->filas; i++){
+        for(int j=0; j < this->columnas; j++){
+            temporal->matriz[i][j] = this->matriz[i][j];
+        }
+    }
+    // creando vector dominante
+    for(int i = 0; i < this->filas; i++)
+        temporal->pivoteoMatriz(i, i); // ordenar ecuaciones por el primer elemento de mayor a menor
+
+    cout << "\nLuego de ordenar las ecuaciones obtenemos el vector dominante: " << endl;
+    temporal->imprimir();
+
+    // crear nueva matriz para las incognitas
+    double* incognitas = new double[temporal->filas];
+    for(int i = 0; i < temporal->filas; i++)
+        incognitas[i] = 0; // rellenando matriz
+
+    // gauss seidel
+    double sumador = 0;
+    for(int k = 0; k < cantIter; k++){
+        for(int i = 0; i < temporal->filas; i++){
+            for(int j = 0; j < temporal->columnas-1; j++){
+                if(i == j)
+                    continue; // si i == J nose realiza ninguna operación
+                sumador += temporal->matriz[i][j] * incognitas[j];
+            }
+            incognitas[i] = (temporal->matriz[i][temporal->columnas-1] - sumador) / temporal->matriz[i][i];
+            sumador = 0;
+        }
+        cout << "\n0" << k+1 << " iteracion:" << endl;
+        temporal->imprimirIncognitas(incognitas);
+    }
+
+    // liberar memoria
+    delete []incognitas;
+    delete temporal;
+}
+
+void Ecuaciones::pivoteoMatriz(int fil, int col){
     float mayor, comparar, aux1, aux2;
-    for(int k = 0; k < filas; k++){
-        mayor = abs(matriz[k][0]);
+    for(int k = fil; k < filas; k++){
+        mayor = abs(matriz[k][col]);
         for(int i = k+1; i < filas; i++){
-            comparar = abs(matriz[i][0]);
+            comparar = abs(matriz[i][col]);
             if(mayor < comparar){
                 mayor = comparar;
                 for(int j = 0; j < columnas; j++){ // intercambiamos filas
@@ -46,7 +90,7 @@ void Ecuaciones::metodoGauss(){
         }
     }
 
-    temporal->pivoteoMatriz(); // ordenar ecuaciones por el primer elemento de mayor a menor
+    temporal->pivoteoMatriz(0, 0); // ordenar ecuaciones por el primer elemento de mayor a menor
     cout << "\nLuego de ordenas las ecuaciones de mayor a menor obtenemos: " << endl;
     temporal->imprimir();
 
@@ -55,6 +99,7 @@ void Ecuaciones::metodoGauss(){
     for(int k = 0; k < filas; k++){
         if(temporal->matriz[k][k] == 0){
             cout << "La matriz no tiene solucion, un elemento de la diagonal es 0..." << endl;
+            delete temporal; // liberar memoria
             return;
         } else {
             // metodo de gauss
@@ -80,6 +125,7 @@ void Ecuaciones::metodoGauss(){
 
     if(fallo){
         cout << "Imposible calcular las incognitas, el metodo de GAUSS fallo..." << endl;
+        delete temporal; // liberar memoria
         return;
     }
 
@@ -110,6 +156,7 @@ void Ecuaciones::metodoGauss(){
     for(int i = 0; i < filT; i++)
         cout << (char)(caracter+i) << " = " << incognitas[i] << endl;
 
+    delete []incognitas; // liberar memoria
     delete temporal; // liberar memoria
 }
 

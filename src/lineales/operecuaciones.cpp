@@ -21,6 +21,7 @@ vector <Operaciones> MenuEcuaciones = { // opciones del menu de operaciones
     { "Crear nueva matriz",                      &OperEcuaciones::crearMatriz }
     ,{ "Ver matrices de ecuaciones existentes",  &OperEcuaciones::verMatrices }
     ,{ "Calcular incognitas - Gauss",            &OperEcuaciones::calcularGauss }
+    ,{ "Calcular incognitas - Gauss Seidel",     &OperEcuaciones::calcularGaussSiedel }
     ,{ "Regresar al menu Principal",             &OperEcuaciones::salirMenu }
 }; // empleamos los punteros a metodos de clase
 
@@ -42,6 +43,22 @@ void OperEcuaciones::mostrarMenu(){
 
         seleccionarOpcion(iOpcion);
     }
+}
+void OperEcuaciones::calcularGaussSiedel(){
+    string nombreMatriz;
+    bool cancelar = false;
+    // buscar la matriz que se necesita para la operacion
+    this->buscarMatriz(cancelar, 1, nombreMatriz);
+
+    if(cancelar)
+        return;
+
+    int iteraciones = 0;
+    cout << "ingrese la cantidad de iteraciones :" << endl;
+    cin >> iteraciones;
+    cout << "La matriz '" << nombreMatriz
+        << "' esta siendo procesada empleando Gauss-Seidel." << endl;
+    this->matrices[nombreMatriz]->metodoGaussSeidel(iteraciones);
 }
 
 void OperEcuaciones::calcularGauss(){

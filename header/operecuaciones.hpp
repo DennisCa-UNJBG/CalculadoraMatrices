@@ -26,6 +26,7 @@ public:
     void crearMatriz(void);
     void verMatrices(void);
     void calcularGauss(void);
+    void calcularGaussSiedel(void);
     void salirMenu(void);
 private:
     void agregarMatriz(int& cantIncognitas, string&nombre);

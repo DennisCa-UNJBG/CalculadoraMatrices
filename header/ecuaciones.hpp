@@ -8,6 +8,7 @@ public:
     Ecuaciones(int cantIncognitas);
     ~Ecuaciones();
     void imprimir(int espacios = 7); // min 5
+    void rellenarAleatoriamente(void);
     void rellenar(void);
     void metodoGauss(void);
     void metodoGaussSeidel(int cantIter);

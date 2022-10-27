@@ -6,6 +6,7 @@
 #include <cmath> // para usar la funcion valor absoluto - abs()
 
 using std::cout;
+using std::cin;
 using std::endl;
 using std::random_device;
 using std::mt19937_64;
@@ -17,7 +18,7 @@ using std::abs;
 void Ecuaciones::imprimirIncognitas(double* array){
     int caracter = 97;
     for(int i = 0; i < this->filas; i++)
-        cout << (char)(caracter+i) << " = " << array[i] << endl;
+        cout << "\t" << (char)(caracter+i) << " = " << array[i] << endl;
 }
 
 void Ecuaciones::metodoGaussSeidel(int cantIter){
@@ -53,7 +54,7 @@ void Ecuaciones::metodoGaussSeidel(int cantIter){
             incognitas[i] = (temporal->matriz[i][temporal->columnas-1] - sumador) / temporal->matriz[i][i];
             sumador = 0;
         }
-        cout << "\n0" << k+1 << " iteracion:" << endl;
+        cout << "\n\t0" << k+1 << " iteracion:" << endl;
         temporal->imprimirIncognitas(incognitas);
     }
 
@@ -179,6 +180,19 @@ void Ecuaciones::imprimir(int espacios){
 }
 
 void Ecuaciones::rellenar(void){
+    for (int i = 0; i < filas; i++){
+        for (int j = 0; j < columnas; j++){
+            if(j != columnas-1)
+                cout << "Ingrese el valor de la matriz [" << i << "][" << j << "]: ";
+            else
+                cout << "Ingrese el valor independiente: ";
+            cin >> matriz[i][j];
+            cout << endl;
+        }
+    }
+}
+
+void Ecuaciones::rellenarAleatoriamente(void){
     random_device rd;
     mt19937_64 generator(rd());
     uniform_int_distribution<int> distribution(MIN, MAX);

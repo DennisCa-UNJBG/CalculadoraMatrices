@@ -91,8 +91,11 @@ void OperEcuaciones::crearMatriz(){ // se omite la variable opcion en la compila
 
 void OperEcuaciones::agregarMatriz(int& cantIncognitas, string&nombre){
     Ecuaciones* matriz = new Ecuaciones(cantIncognitas);
-    matriz->rellenar();
-    cout << "\nLa matriz de ecuaciones tiene los valores es:" << endl;
+    char numAleatorios = false;
+    cout << "\nRellenar los valores de forma aleatoria?(y/n): " << endl;
+    cin >> numAleatorios;
+    (numAleatorios == 'y') ? matriz->rellenarAleatoriamente() : matriz->rellenar();
+    cout << "\nLa matriz de ecuaciones tiene los valores:" << endl;
     matriz->imprimir();
     matrices[nombre] = matriz;
 }

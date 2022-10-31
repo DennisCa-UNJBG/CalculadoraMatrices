@@ -1,6 +1,18 @@
 #ifndef _MATRIZ_
 #define _MATRIZ_
 
+#include <iostream>
+#include <cmath>
+#include <random> // generar numeros aleatorios
+#include <iomanip> // crear una tabla
+
+using std::cout;
+using std::endl;
+using std::random_device;
+using std::mt19937_64;
+using std::uniform_int_distribution;
+using std::setw;
+
 class Matriz{ /* clase base de una matriz */
 public:
     /* varibles de configuracion */

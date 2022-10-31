@@ -1,16 +1,5 @@
-#include <iostream>
-#include <vector>
-#include <sstream> // convertir string a int
-// libreria custom
+// cabecera custom
 #include <operecuaciones.hpp>
-#include <ecuaciones.hpp>
-
-using std::cout;
-using std::cin;
-using std::string;
-using std::vector;
-using std::stringstream;
-using std::endl;
 
 struct Operaciones{  /* estructura para controlar las opciones del menu de operaciones */
     string opciones;

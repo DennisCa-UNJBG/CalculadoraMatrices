@@ -9,10 +9,19 @@ https://youtu.be/Con1JRZLbqM?t=383
 
 #include <map>
 #include <string>
+#include <iostream>
+#include <vector>
+#include <sstream> // convertir string a int
+// cabecera custom
 #include <ecuaciones.hpp>
 
 using std::map;
 using std::string;
+using std::cout;
+using std::cin;
+using std::endl;
+using std::vector;
+using std::stringstream;
 
 class OperEcuaciones{
 public:

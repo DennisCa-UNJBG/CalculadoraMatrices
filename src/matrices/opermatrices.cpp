@@ -1,15 +1,5 @@
-#include <iostream>
-#include <vector>
-#include <sstream> // convertir string a int
-// librerias custom
-#include <matriz.hpp>
+// cabecera custom
 #include <opermatrices.hpp>
-
-using std::cout;
-using std::vector;
-using std::cin;
-using std::stringstream;
-using std::endl;
 
 struct OperMatrices{  /* estructura para controlar las opciones del menu de operaciones */
     string opciones;

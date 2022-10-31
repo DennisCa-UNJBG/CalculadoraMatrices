@@ -3,10 +3,19 @@
 
 #include <map>
 #include <string>
+#include <iostream>
+#include <vector>
+#include <sstream> // convertir string a int
+// cabecera custom
 #include <matriz.hpp>
 
 using std::map;
 using std::string;
+using std::cout;
+using std::vector;
+using std::cin;
+using std::stringstream;
+using std::endl;
 
 class OperacMatrices{ /* clase global de operaciones */
 public:

@@ -1,18 +1,5 @@
-#include <iostream>
-#include <iomanip> // crear una tabla
-#include <random> // generar numeros aleatorios
-// libreria custom
+// cabecera custom
 #include <ecuaciones.hpp>
-#include <cmath> // para usar la funcion valor absoluto - abs()
-
-using std::cout;
-using std::endl;
-using std::random_device;
-using std::mt19937_64;
-using std::uniform_int_distribution;
-using std::setw;
-using std::setprecision;
-using std::abs;
 
 void Ecuaciones::imprimirIncognitas(double* array){
     int caracter = 97;

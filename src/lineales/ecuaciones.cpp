@@ -93,7 +93,8 @@ void Ecuaciones::metodoGauss(){
             for(int i = k+1; i < filas; i++){ // recorremos la fila
                 double aux = temporal->matriz[i][k]; // guardamos para evitar que se pierda el valor original al reemplazar la fila
                 for(int j = k; j < columnas; j++){ // recorremos las columnas de la fila
-                    temporal->matriz[i][j] = temporal->matriz[i][j] - (aux/temporal->matriz[k][k]) * temporal->matriz[k][j];
+                    temporal->matriz[i][j] = temporal->matriz[i][j] - ((aux/temporal->matriz[k][k]) * temporal->matriz[k][j]);
+                    temporal->matriz[i][j] = trunc(temporal->matriz[i][j]*1000)/1000;// redondear valor para trabajar con 3 decimales
                 }
                 cout << "\n0" << iterador++ << " iteracion:" << endl;
                 temporal->imprimir();
@@ -124,17 +125,11 @@ void Ecuaciones::metodoGauss(){
     // obtenemos la ultima incognita para operar el resto
     incognitas[filT-1] = temporal->matriz[filT-1][colT-1]/temporal->matriz[filT-1][colT-2];
     double operacion = 0;
-    //cout << incognitas[filT-1] << endl;
     for(int i=filT-2; i >= 0; i--){
         for(int j=i+1; j < colT-1; j++){
-            //cout << temporal->matriz[i][j] << "*" << incognitas[j]<< " + " << endl;
             operacion += temporal->matriz[i][j] * incognitas[j];
         }
-        //cout << endl;
         incognitas[i] = (temporal->matriz[i][temporal->columnas-1]-operacion)/temporal->matriz[i][i];
-        //cout << temporal->matriz[i][temporal->columnas-1] <<"-"<< operacion << "/"<<temporal->matriz[i][i] <<endl;
-        //cout << incognitas[i] << endl;
-        //cout << endl;
         operacion = 0; // reiniciando sumador
     }
 

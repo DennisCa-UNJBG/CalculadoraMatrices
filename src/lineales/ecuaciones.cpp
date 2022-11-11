@@ -7,7 +7,36 @@ void Ecuaciones::imprimirIncognitas(double* array){
         cout << "\t" << (char)(caracter+i) << " = " << array[i] << endl;
 }
 
-void Ecuaciones::metodoGaussSeidel(int cantIter){
+bool Ecuaciones::EpsilonSeidel(double* oldSol, double* newSol, int cantidad){
+    double EPSILON = 0.01; // error iterativo como tolerancia
+    double aux = 0;
+    for(int i = 0; i < cantidad; i++){
+        aux = ((newSol[i] - oldSol[i]) / newSol[i]) * 100;
+        //cout << newSol[i] << " - " << oldSol[i] << " '"<< aux <<"' --"; // para ver los calculos
+        if(abs(aux) < EPSILON)
+            return false;
+    }
+    cout << endl;
+    return true;
+}
+
+bool Ecuaciones::DiagonalDominante(){
+    for(int i=0; i < this->filas; i++){
+        float sumador = 0;
+        for(int j=0; j < this->columnas-1; j++){
+            if(i == j)
+                continue;
+
+            sumador += abs(this->matriz[i][j]);
+        }
+        if(abs(this->matriz[i][i]) < sumador) // si la diagonal no es dominante abortamos
+            return false;
+    }
+
+    return true;
+}
+
+void Ecuaciones::metodoGaussSeidel(){
     // usamos una variable temporal para no afectar a la matriz original
     Ecuaciones* temporal = new Ecuaciones(this->filas);
     // copiar datos de la matriz original
@@ -23,29 +52,42 @@ void Ecuaciones::metodoGaussSeidel(int cantIter){
     cout << "\nLuego de ordenar las ecuaciones obtenemos el vector dominante: " << endl;
     temporal->imprimir();
 
+    if(!temporal->DiagonalDominante()){
+        cout << "ERROR: La diagonal no cumple con el requisito de ser dominante." << endl;
+        return;
+    }
+
     // crear nueva matriz para las incognitas
-    double* incognitas = new double[temporal->filas];
+    double* incognitasOld = new double[temporal->filas];
+    double* incognitasNew = new double[temporal->filas];
     for(int i = 0; i < temporal->filas; i++)
-        incognitas[i] = 0; // rellenando matriz
+        incognitasOld[i] = 0; // rellenando matriz para evitar errores
+
+    for(int i = 0; i < temporal->filas; i++)
+        incognitasNew[i] = -10; // rellenando matriz para evitar errores
 
     // gauss seidel
     double sumador = 0;
-    for(int k = 0; k < cantIter; k++){
+    int k = 0;
+    while (EpsilonSeidel(incognitasOld, incognitasNew, temporal->filas)){
         for(int i = 0; i < temporal->filas; i++){
             for(int j = 0; j < temporal->columnas-1; j++){
                 if(i == j)
                     continue; // si i == J nose realiza ninguna operación
-                sumador += temporal->matriz[i][j] * incognitas[j];
+                sumador += temporal->matriz[i][j] * incognitasOld[j];
             }
-            incognitas[i] = (temporal->matriz[i][temporal->columnas-1] - sumador) / temporal->matriz[i][i];
+            incognitasOld[i] = incognitasNew[i];
+            incognitasNew[i] = (temporal->matriz[i][temporal->columnas-1] - sumador) / temporal->matriz[i][i];
             sumador = 0;
         }
         cout << "\n\t0" << k+1 << " iteracion:" << endl;
-        temporal->imprimirIncognitas(incognitas);
+        temporal->imprimirIncognitas(incognitasNew);
+        k++;
     }
 
     // liberar memoria
-    delete []incognitas;
+    delete []incognitasOld;
+    delete []incognitasNew;
     delete temporal;
 }
 

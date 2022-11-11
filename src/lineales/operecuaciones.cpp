@@ -42,12 +42,7 @@ void OperEcuaciones::calcularGaussSiedel(){
     if(cancelar)
         return;
 
-    int iteraciones = 0;
-    cout << "ingrese la cantidad de iteraciones :" << endl;
-    cin >> iteraciones;
-    cout << "La matriz '" << nombreMatriz
-        << "' esta siendo procesada empleando Gauss-Seidel." << endl;
-    this->matrices[nombreMatriz]->metodoGaussSeidel(iteraciones);
+    this->matrices[nombreMatriz]->metodoGaussSeidel();
 }
 
 void OperEcuaciones::calcularGauss(){

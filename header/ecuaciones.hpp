@@ -26,14 +26,16 @@ public:
     void rellenarAleatoriamente(void);
     void rellenar(void);
     void metodoGauss(void);
-    void metodoGaussSeidel(int cantIter);
-    // metodo para ordenar ecuaciones por el primer elemento de mayor a menor
-    void pivoteoMatriz(int fil, int col); // pivoteo
+    void metodoGaussSeidel();
 private:
     double** matriz;
     int filas;
     int columnas;
     void imprimirIncognitas(double* array);
+    // metodo para ordenar ecuaciones por el primer elemento de mayor a menor
+    void pivoteoMatriz(int fil, int col); // pivoteo
+    bool DiagonalDominante(); // seidel
+    bool EpsilonSeidel(double* oldSol, double* newSol, int cantidad); // seidel
 protected:
 };
 

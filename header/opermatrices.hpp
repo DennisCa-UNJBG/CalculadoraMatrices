@@ -1,5 +1,5 @@
-#ifndef _OPERCMATRICES_
-#define _OPERCMATRICES_
+#ifndef _OPER_MATRICES_
+#define _OPER_MATRICES_
 
 #include <map>
 #include <string>
@@ -7,7 +7,7 @@
 #include <vector>
 #include <sstream> // convertir string a int
 // cabecera custom
-#include <matriz.hpp>
+#include <matrices.hpp>
 
 using std::map;
 using std::string;
@@ -19,7 +19,7 @@ using std::endl;
 
 class OperacMatrices{ /* clase global de operaciones */
 public:
-    map<string, Matriz*>matrices; // estructura clave/valor (contiene todas las matrices)
+    map<string, Matrices*>matrices; // estructura clave/valor (contiene todas las matrices)
     static bool openMenu;
     // menu
     void mostrarMenu(void);

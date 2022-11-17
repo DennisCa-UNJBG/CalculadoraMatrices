@@ -73,16 +73,16 @@ void OperacMatrices::crearMatriz(){ // se omite la variable opcion en la compila
 }
 
 void OperacMatrices::verMatrices(){
-    map<string, Matriz*>::iterator iterador;
+    map<string, Matrices*>::iterator iterador;
     cout << "\n\nImprimiendo matrices almacenadas: \n" << endl;
     for (iterador = this->matrices.begin(); iterador != this->matrices.end(); iterador++){
         // "first" tiene la clave. "second" el valor
         string clave = iterador->first;
-        Matriz* valor = iterador->second;
+        Matrices* valor = iterador->second;
         // usamos las variables Clave/Valor para mostrar resultados en pantalla
         cout << "La matriz : " << clave
             << "\nTiene los  valores:" << endl;
-        valor->imprimirMatriz();
+        valor->imprimir();
     }
 }
 
@@ -127,9 +127,9 @@ void OperacMatrices::inversaMatriz(void){
         return;
     }
 
-    Matriz* matriz = this->matrices[nombreMatriz]->calcularInversa(det);
+    Matrices* matriz = this->matrices[nombreMatriz]->calcularInversa(det);
     cout << "La inversa de la matriz '" << nombreMatriz << "' es :" << endl;
-    matriz->imprimirMatriz(7);
+    matriz->imprimir(7);
     cout << "La determinante es: " << det << endl;
     delete matriz; // liberar memoria
 }
@@ -150,9 +150,9 @@ void OperacMatrices::multiMatrices(void){
     if(this->noCumpleReqMulti(nombreMatriz[0], nombreMatriz[1]))
         return;
 
-    Matriz* temp = *(this->matrices[nombreMatriz[0]]) * *(this->matrices[nombreMatriz[1]]);
+    Matrices* temp = *(this->matrices[nombreMatriz[0]]) * *(this->matrices[nombreMatriz[1]]);
     cout << "\nLa multiplicacion de las matrices ( " << nombreMatriz[0] << " * " << nombreMatriz[1] << " ) es:" << endl;
-    temp->imprimirMatriz();
+    temp->imprimir();
     delete temp; // liberar memoria
 }
 
@@ -169,9 +169,9 @@ void OperacMatrices::multiEscalarMatriz(void){
     cout << "Ingrese el escalar: " << endl;
     cin >> numero;
 
-    Matriz* temp = *(this->matrices[nombreMatriz]) * numero;
+    Matrices* temp = *(this->matrices[nombreMatriz]) * numero;
     cout << "\nLa multiplicacion de la matriz ( " << nombreMatriz << " * " << numero << " ) es:" << endl;
-    temp->imprimirMatriz(7);
+    temp->imprimir(7);
     delete temp; // liberar memoria
 }
 
@@ -191,9 +191,9 @@ void OperacMatrices::restarMatrices(void){
     if(this->noCumpleReqSumRest(nombreMatriz[0], nombreMatriz[1]))
         return;
 
-    Matriz* temp = *(this->matrices[nombreMatriz[0]]) - *(this->matrices[nombreMatriz[1]]);
+    Matrices* temp = *(this->matrices[nombreMatriz[0]]) - *(this->matrices[nombreMatriz[1]]);
     cout << "\nLa resta de las matrices ( " << nombreMatriz[0] << " - " << nombreMatriz[1] << " ) es:" << endl;
-    temp->imprimirMatriz();
+    temp->imprimir();
     delete temp;  // liberar memoria
 }
 
@@ -213,9 +213,9 @@ void OperacMatrices::sumarMatrices(void){
     if(this->noCumpleReqSumRest(nombreMatriz[0], nombreMatriz[1]))
         return;
 
-    Matriz* temp = *(this->matrices[nombreMatriz[0]]) + *(this->matrices[nombreMatriz[1]]);
+    Matrices* temp = *(this->matrices[nombreMatriz[0]]) + *(this->matrices[nombreMatriz[1]]);
     cout << "\nLa suma de las matrices ( " << nombreMatriz[0] << " + " << nombreMatriz[1] << " ) es:" << endl;
-    temp->imprimirMatriz();
+    temp->imprimir();
     delete temp;  // liberar memoria
 }
 
@@ -224,11 +224,11 @@ void OperacMatrices::salirMenuOper(void){
 }
 
 void OperacMatrices::agregarMatriz(int& filas, int& columnas, string&nombre){
-    Matriz* matriz;                 //crear matriz cuadrada         // crear matriz no cuadrada
-    (filas == columnas) ? matriz = new Matriz(filas) : matriz = new Matriz(filas, columnas);
-    matriz->rellenarMatriz();
+    Matrices* matriz;                 //crear matriz cuadrada         // crear matriz no cuadrada
+    (filas == columnas) ? matriz = new Matrices(filas) : matriz = new Matrices(filas, columnas);
+    matriz->rellenarAleatoriamente();
     cout << "\nLa matriz ingresada tiene los valores es:" << endl;
-    matriz->imprimirMatriz();
+    matriz->imprimir();
     matrices[nombre] = matriz;
 }
 
@@ -241,7 +241,7 @@ void OperacMatrices::buscarMatriz(bool& cancelar, int cantMatriz, string& nombre
 
         if (this->matrices.count(nombre)){ // count() -> verifica si existe un item con X nombre
             cout << "Sus elementos son:" << endl;
-            this->matrices[nombre]->imprimirMatriz();
+            this->matrices[nombre]->imprimir();
             matrizEncontrada = true;
         } else {
             cout << "La matriz '" << nombre <<"' no se encuentra...\n"

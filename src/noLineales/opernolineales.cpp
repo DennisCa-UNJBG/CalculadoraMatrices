@@ -7,6 +7,7 @@ struct Operaciones{  /* estructura para controlar las opciones del menu de opera
 
 vector <Operaciones> MenuNoLineales = { // opciones del menu de operaciones
     { "Crear nueva ecuacion",                   &OperEcuNoLineales::crearEcuacion }
+    ,{ "Ver matrices de ecuaciones existentes", &OperEcuNoLineales::verMatrices }
     ,{ "Calcular incognitas - newton Raphson",  &OperEcuNoLineales::calcularNewtonRaphson }
     ,{ "Regresar",                              &OperEcuNoLineales::salirMenu }
 }; // empleamos los punteros a metodos de clase
@@ -32,7 +33,7 @@ void OperEcuNoLineales::mostrarMenu(){
 }
 
 void OperEcuNoLineales::agregarMatriz(int& cantIncognitas, string&nombre){
-    EcuNoLineales* matriz = new EcuNoLineales(cantIncognitas);
+    EcuNoLineales* matriz = new EcuNoLineales(cantIncognitas+1);
     char numAleatorios = false;
     cout << "\nRellenar los valores de forma aleatoria?(y/n): " << endl;
     cin >> numAleatorios;
@@ -48,13 +49,14 @@ void OperEcuNoLineales::crearEcuacion() {
     cout << "\nIngrese un nombre(sin espacios):" << endl;
     cin.sync(); getline(cin,nombre);
 
-    cout << "\nIngrese la cantidad de incognitas: " << endl;
+    cout << "\nIngrese la cantidad de terminos de la ecuacion: " << endl;
     cin >> cantIncognitas;
     this->agregarMatriz(cantIncognitas, nombre) ;
 }
 
 void OperEcuNoLineales::calcularNewtonRaphson(void){
     string nombreMatriz;
+    double valX = 0;
     bool cancelar = false;
     // buscar la matriz que se necesita para la operacion
     this->buscarMatriz(cancelar, 1, nombreMatriz);
@@ -62,7 +64,10 @@ void OperEcuNoLineales::calcularNewtonRaphson(void){
     if(cancelar)
         return;
 
-    this->matrices[nombreMatriz]->metodoNewtonRaphson();
+    cout << "Ingrese el valor inicial de X para iniciar: " << endl;
+    cin >> valX;
+
+    this->matrices[nombreMatriz]->metodoNewtonRaphson(valX);
 }
 
 void OperEcuNoLineales::buscarMatriz(bool& cancelar, int cantMatriz, string& nombre){
@@ -89,8 +94,8 @@ void OperEcuNoLineales::buscarMatriz(bool& cancelar, int cantMatriz, string& nom
 }
 
 void  OperEcuNoLineales::mostrarOpciones(){
-    cout << "\n\tOPERACIONES CON ECUACIONES\n"
-        << "******************************************\n"
+    cout << "\n\tOPERACIONES CON ECUACIONES NO LINEALES\n"
+        << "*****************************************************\n"
         << endl;
 
     for(size_t i = 0; i < MenuNoLineales.size(); i++)
@@ -110,4 +115,18 @@ void OperEcuNoLineales::seleccionarOpcion(int opcion){
 
 void OperEcuNoLineales::salirMenu(void){
     openMenu = false;
+}
+
+void OperEcuNoLineales::verMatrices(){
+    map<string, EcuNoLineales*>::iterator iterador;
+    cout << "\n\nImprimiendo matrices de ecuaciones no lineales almacenadas: \n" << endl;
+    for (iterador = this->matrices.begin(); iterador != this->matrices.end(); iterador++){
+        // "first" tiene la clave. "second" el valor
+        string clave = iterador->first;
+        EcuNoLineales* valor = iterador->second;
+        // usamos las variables Clave/Valor para mostrar resultados en pantalla
+        cout << "La matriz de ecuacion no lineal: '" << clave
+            << "'\nTiene los  valores:" << endl;
+        valor->imprimir();
+    }
 }

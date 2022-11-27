@@ -29,6 +29,7 @@ public:
     static bool openMenu;
     // menu
     void mostrarMenu(void);
+    void verMatrices(void);
     void salirMenu(void);
     void mostrarOpciones(void);
     void seleccionarOpcion(int opcion);

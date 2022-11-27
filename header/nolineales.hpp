@@ -22,9 +22,16 @@ class EcuNoLineales : public MatrizBase{
 public:
     EcuNoLineales(int cantIncognitas) : MatrizBase(1, cantIncognitas){};
     ~EcuNoLineales(){ MatrizBase::~MatrizBase(); };
-    void imprimir(int espacios = 7) override; // min 5
-    void metodoNewtonRaphson(void);
+    inline EcuNoLineales* getDerivada(void) { return derivada; }
+    void imprimir(int espacios = 5) override; // min 4
+    void metodoNewtonRaphson(double valX);
+    // biseccion
+    // punto fijo multivariable
+    // raphson modificado
 private:
+    EcuNoLineales* derivada = nullptr;
+    void obtenerDerivar(void); // newton-raphson
+    double calcFuncion(double valX); // newton-raphson
 protected:
 };
 

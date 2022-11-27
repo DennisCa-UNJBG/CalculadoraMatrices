@@ -80,6 +80,8 @@ void salirPrograma(int /*opcion*/){
     map<string, EcuNoLineales*>::iterator iterador03;
     for (iterador03 = EcuacionesNoLin.matrices.begin(); iterador03 != EcuacionesNoLin.matrices.end(); iterador03++){
         EcuNoLineales* valor = iterador03->second;
+        EcuNoLineales* derivadas = valor->getDerivada();
+        delete derivadas;
         delete valor; // liberando memoria de cada matriz
     }
     ejecutando = false;
